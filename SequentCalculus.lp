@@ -55,15 +55,29 @@ constant symbol V : Id → Formula;
 
 constant symbol Equality : Term → Term → Formula;
 
-constant symbol Neg : Formula → Formula;
-constant symbol Implies : Formula → Formula → Formula;
-constant symbol Iff : Formula → Formula → Formula;
-constant symbol And : Formula → Formula → Formula;
-constant symbol Or : Formula → Formula → Formula;
+constant symbol Top : Formula;
+constant symbol Bot : Formula;
+
+symbol Neg : Formula → Formula;
+symbol Implies : Formula → Formula → Formula;
+symbol Iff : Formula → Formula → Formula;
+symbol And : List formula → Formula;
+symbol Or  : List formula → Formula;
+
+symbol HOLE : Formula ;
+
+// x ∨ ¬ x
+symbol toto ≔ λ x : Formula, Or ( x ⸬ (Neg x)  ⸬ Nil);
+
+compute toto HOLE;
+
+
+// symbol form2sequent :
+// rule  And Nil ↪ seq Nil;
 
 constant symbol Forall : (Term → Formula) → Formula;
 constant symbol Exists : (Term → Formula) → Formula;
-constant symbol ExistsOne : (Term → Formula) → Formula;
+symbol ExistsOne : (Term → Formula) → Formula;
 
 constant symbol Sequent : TYPE;
 constant symbol seq : List formula → List formula → Sequent;
@@ -86,15 +100,14 @@ rule swap-multi ($i ⸬ $il) ($v ⸬ $vl) $acc ↪ swap-multi $il $vl (insert $v
 compute swap-multi (3 ⸬ 0 ⸬ 2 ⸬ 1 ⸬ 4 ⸬ Nil) (42 ⸬ 50 ⸬ 167 ⸬ 21 ⸬ 17 ⸬ Nil) Nil;
 
 
-
 // Deduction Rules
 constant symbol Hypothesis ϕ Γ Δ : prf (seq (ϕ ⸬ Γ) (ϕ ⸬ Δ));
 constant symbol SwapLeft Γ Δ (perm: (List nat)) : prf (seq Γ Δ) → prf (seq (swap-multi perm Γ Nil) Δ);
 constant symbol SwapRight Γ Δ (perm: (List nat)) : prf (seq Γ Δ) → prf (seq Γ (swap-multi perm Δ Nil));
 constant symbol Cut Γ Σ Δ Ω ϕ : prf (seq Γ (ϕ ⸬ Δ)) → prf (seq (ϕ ⸬ Σ) Ω) → prf (seq (append Γ Σ) (append Δ Ω));
 
-constant symbol LeftAnd Γ ϕ ψ Δ : prf (seq (ϕ ⸬ ψ ⸬ Γ) Δ) → prf (seq ((And ϕ ψ) ⸬ Γ) Δ);
-constant symbol LeftOr Γ Σ Δ Ω ϕ ψ : prf (seq (ϕ ⸬ Γ) Δ) → prf (seq  (ψ ⸬ Σ) Ω) → prf (seq ((Or ϕ ψ) ⸬ (append Γ Σ)) (append Δ Ω));
+constant symbol LeftAnd Γ l Δ : prf (seq (append l Γ) Δ) → prf (seq ((And l) ⸬ Γ) Δ);
+// constant symbol LeftOr Γ Σ Δ Ω ϕ ψ : prf (seq (ϕ ⸬ Γ) Δ) → prf (seq  (ψ ⸬ Σ) Ω) → prf (seq ((Or l) ⸬ (append Γ Σ)) (append Δ Ω));
 constant symbol LeftImplies Γ Σ Δ Ω ϕ ψ :  prf (seq Γ (ϕ ⸬ Δ)) → prf (seq (ψ ⸬ Σ) Ω) → prf (seq ((Implies ϕ ψ) ⸬ (append Γ Σ)) (append Δ Ω));
 constant symbol LeftIff Γ ϕ ψ Δ : prf (seq ((Implies ϕ ψ) ⸬ (Implies ψ ϕ) ⸬ Γ) Δ) → prf (seq ((Iff ϕ ψ) ⸬ Γ) Δ);
 constant symbol LeftNot Γ ϕ Δ : prf (seq Γ (ϕ ⸬ Δ)) → prf (seq ( (Neg ϕ) ⸬ Γ) Δ);
@@ -103,8 +116,8 @@ constant symbol LeftExists Γ ϕ Δ : (Π x:Term, prf (seq ((ϕ x) ⸬ Γ) Δ)) 
 constant symbol LeftExistsOne Γ ϕ Δ : prf (seq ((Exists (λ y : Term, (Forall (λ x : Term, (Iff (Equality x y) (ϕ x)))))) ⸬ Γ) Δ) → 
                                       prf (seq ((ExistsOne ϕ ⸬ Γ)) Δ);
 
-constant symbol RightAnd Γ Σ Δ Ω ϕ ψ : prf (seq Γ (ϕ ⸬ Δ)) → prf (seq  Σ (ψ ⸬ Ω)) → prf (seq (append Γ Σ) ((And ϕ ψ) ⸬ (append Δ Ω)));
-constant symbol RightOr Γ ϕ ψ Δ : prf (seq Γ (ϕ ⸬ ψ ⸬ Δ)) → prf (seq Γ ((Or ϕ ψ) ⸬ Δ));
+// constant symbol RightAnd Γ ϕ Σ : prf (seq Γ (ϕ ⸬ Δ)) → prf (seq  Σ (ψ ⸬ Ω)) → prf (seq (append Γ Σ) ((And l) ⸬ (append Δ Ω)));
+constant symbol RightOr Γ l Δ : prf (seq Γ (append l Δ)) → prf (seq Γ ((Or l) ⸬ Δ));
 constant symbol RightImplies Γ ϕ ψ Δ : prf (seq (ϕ ⸬ Γ) (ψ ⸬ Δ)) → prf (seq Γ ((Implies ϕ ψ) ⸬ Δ));
 constant symbol RightIff Γ Σ Δ Ω ϕ ψ : prf (seq Γ ((Implies ϕ ψ) ⸬ Δ)) → prf (seq  Σ ((Implies ψ ϕ) ⸬ Ω)) → prf (seq (append Γ Σ) ((Iff ϕ ψ) ⸬ (append Δ Ω)));
 constant symbol RightNot Γ ϕ Δ : prf (seq Γ Δ) → prf (seq  Γ ((Neg ϕ) ⸬ Δ));
@@ -118,3 +131,54 @@ constant symbol RightWeakening Γ Ω Δ : prf (seq Γ Δ) → prf (seq Γ (appen
 
 constant symbol LeftRefl Γ t Δ : prf (seq ((Equality t t) ⸬ Γ) Δ) → prf (seq Γ Δ);
 constant symbol RightRefl t : prf (seq Nil ((Equality t t) ⸬ Nil));
+
+
+// Builtin
+// Syntactic sugar - And, Iff, Implies, ExistsOne
+
+symbol map [a] [b] : (τ a → τ b) → List a → List b ;
+rule map _ Nil ↪ Nil;
+rule map $f ($x ⸬ $l) ↪ ($f $x) ⸬ (map $f $l);
+
+rule And $l ↪ Neg (Or (map Neg $l));
+rule Iff $ϕ $ψ ↪ And ((Implies $ϕ $ψ) ⸬ (Implies $ψ $ϕ) ⸬ Nil);
+rule Implies $ϕ $ψ ↪ Or ((Neg $ϕ) ⸬ $ψ ⸬ Nil) ;
+rule ExistsOne $f ↪ Forall (λ y, (Exists (λ x, Iff (Equality x y) ($f x))));
+
+// Rewriting rules
+
+rule Or Nil ↪ Top;
+
+// A1 - Commutativité
+
+// A2 - Associativité
+
+symbol norm : Formula → Formula;
+symbol flatten : List formula → List formula ;
+rule flatten Nil ↪ Nil;
+rule flatten ((Or $l1) ⸬ $l2) ↪ append (flatten $l1) (flatten $l2);
+rule flatten ((Neg $x) ⸬ $l) ↪ (Neg (norm $x)) ⸬ (flatten $l);
+rule flatten (Bot ⸬ $l) ↪ Bot ⸬ (flatten $l);
+rule flatten (Top ⸬ $l) ↪ Bot ⸬ (flatten $l);
+
+// rule norm (Or ((Or $l1) ⸬ $l2)) ↪ Or (append (norm $l1) (norm $l2));
+// rule Or ((Or $l1) ⸬ $l2) ↪ Or (append $l1 $l2);
+
+rule norm (Or ((Or $l1) ⸬ $l2)) ↪ Or (append (flatten $l1) (flatten $l2)) ;
+
+compute norm (Or (Or (Top ⸬ Nil) ⸬ Bot ⸬ (Or (Bot ⸬ Nil)) ⸬ Nil));
+
+rule Or ($x ⸬ Nil) ↪ $x;
+
+// A3 -
+// rule Or
+
+// A4 -
+// rule
+
+// A5
+
+rule Neg (Neg $x) ↪ $x;
+
+rule Neg Bot ↪ Top;
+rule Neg Top ↪ Bot;
