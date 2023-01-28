@@ -5,6 +5,9 @@ require open lisa2dedukti.prelude;
 constant symbol Hypothesis ϕ Γ Δ : prf (seq (ϕ ⸬ Γ) (ϕ ⸬ Δ));
 constant symbol SwapLeft Γ Δ (perm: (List nat)) : prf (seq Γ Δ) → prf (seq (swap-multi perm Γ Nil) Δ);
 constant symbol SwapRight Γ Δ (perm: (List nat)) : prf (seq Γ Δ) → prf (seq Γ (swap-multi perm Δ Nil));
+//Computational reduction rules to mimic the contraction rule.
+rule seq ($x ⸬ $x ⸬ $l) $l2 ↪ seq ($x ⸬ $l) $l2;
+rule seq $l2 ($x ⸬ $x ⸬ $l)  ↪ seq $l2 ($x ⸬ $l);
 constant symbol Cut Γ Σ Δ Ω ϕ : prf (seq Γ (ϕ ⸬ Δ)) → prf (seq (ϕ ⸬ Σ) Ω) → prf (seq (append Γ Σ) (append Δ Ω));
 
 constant symbol LeftAnd Γ l Δ : prf (seq (append l Γ) Δ) → prf (seq ((And l) ⸬ Γ) Δ);
@@ -21,7 +24,7 @@ constant symbol LeftExistsOne Γ ϕ Δ : prf (seq ((Exists (λ y : Term, (Forall
 constant symbol RightOr Γ l Δ : prf (seq Γ (append l Δ)) → prf (seq Γ ((Or l) ⸬ Δ));
 constant symbol RightImplies Γ ϕ ψ Δ : prf (seq (ϕ ⸬ Γ) (ψ ⸬ Δ)) → prf (seq Γ ((Implies ϕ ψ) ⸬ Δ));
 constant symbol RightIff Γ Σ Δ Ω ϕ ψ : prf (seq Γ ((Implies ϕ ψ) ⸬ Δ)) → prf (seq  Σ ((Implies ψ ϕ) ⸬ Ω)) → prf (seq (append Γ Σ) ((Iff ϕ ψ) ⸬ (append Δ Ω)));
-constant symbol RightNot Γ ϕ Δ : prf (seq Γ Δ) → prf (seq  Γ ((Neg ϕ) ⸬ Δ));
+constant symbol RightNot Γ ϕ Δ : prf (seq (ϕ ⸬ Γ) Δ) → prf (seq  Γ ((Neg ϕ) ⸬ Δ));
 constant symbol RightForall Γ ϕ Δ : (Π x:Term, prf (seq Γ ((ϕ x) ⸬ Δ))) → prf (seq Γ ((Forall ϕ) ⸬ Δ));
 constant symbol RightExists Γ ϕ t Δ : prf (seq Γ ((ϕ t) ⸬ Δ) ) → prf (seq Γ ((Exists ϕ) ⸬ Δ));
 constant symbol RightExistsOne Γ ϕ Δ : prf (seq Γ ((Exists (λ y : Term, (Forall (λ x : Term, (Iff (Equality x y) (ϕ x)))))) ⸬ Δ)) → 

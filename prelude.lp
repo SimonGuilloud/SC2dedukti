@@ -6,7 +6,7 @@ injective symbol τ : Set → TYPE; // `t or \tau
 
 constant symbol List:Π a:Set, TYPE;
 constant symbol Nil [a] : List a;
-constant symbol ⸬   [a] : τ a → List a → List a;
+symbol ⸬   [a] : τ a → List a → List a;
 
 notation ⸬ infix right 20;
 

@@ -1,0 +1,8 @@
+1.OCBSL
+    Use AC on :: + idempotence to define sets - should be easy but need to check it works in all cases
+    Option 2 : Use "sequential" to have negative cases. May work in some cases but lose some properties so need to check if good for us
+2.Interpretation of LK into TYPE (Natural Deduction) May not have been done for similar cases.
+
+(OL : Wait for possible CTRS features) Amelie shows Simon
+
+Yassine lambdapi-logics Zenon LL

@@ -33,12 +33,7 @@ symbol Iff : Formula → Formula → Formula;
 symbol And : List formula → Formula;
 symbol Or  : List formula → Formula;
 
-symbol HOLE : Formula ;
 
-// x ∨ ¬ x
-symbol toto ≔ λ x : Formula, Or ( x ⸬ (Neg x)  ⸬ Nil);
-
-compute toto HOLE;
 
 
 // symbol form2sequent :
@@ -49,7 +44,7 @@ constant symbol Exists : (Term → Formula) → Formula;
 symbol ExistsOne : (Term → Formula) → Formula;
 
 constant symbol Sequent : TYPE;
-constant symbol seq : List formula → List formula → Sequent;
+symbol seq : List formula → List formula → Sequent;
 //type Implies (V x) (Or (V x) (And (V y) (V z)));
 
 symbol myfirst-sequent ≔ λ x : Formula,  λ y : Formula, seq  ((Neg x) ⸬ Nil) (y ⸬ Nil) ;

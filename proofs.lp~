@@ -1,0 +1,30 @@
+require open lisa2dedukti.FOL;
+require open lisa2dedukti.prelude;
+require open lisa2dedukti.SequentCalculus;
+
+
+symbol l0 ≔ λ ϕ : Formula, λ ψ : Formula, Hypothesis ϕ Nil Nil;
+symbol l1 ≔ λ ϕ : Formula, λ ψ : Formula, (RightWeakening (ϕ ⸬ Nil) (ψ ⸬ Nil) (ϕ ⸬ Nil) (l0 ϕ ψ));
+
+
+
+symbol l2 ≔ λ ϕ : Formula, λ ψ : Formula, 
+                           (RightImplies Nil ϕ ψ (ϕ ⸬ Nil)
+                                         (l1 ϕ ψ)
+                           );
+type l2;
+                           
+
+symbol l3 ≔ λ ϕ : Formula, λ ψ : Formula,
+                           (LeftImplies Nil Nil (ϕ ⸬ Nil) (ϕ ⸬ Nil) (Implies ϕ ψ) ϕ
+                                        (l2 ϕ ψ)
+                                        (Hypothesis ϕ Nil Nil)
+                           );
+
+type l3;
+compute Π ϕ: Formula, Π ψ: Formula, prf (seq (Implies (Implies ϕ ψ) ϕ ⸬ append Nil Nil) (append (ϕ ⸬ Nil) (ϕ ⸬ Nil)));
+symbol pierce ≔ λ ϕ : Formula, λ ψ : Formula,
+               (RightImplies Nil (Implies (Implies ϕ ψ) ϕ) ϕ Nil
+                             (l3 ϕ ψ)
+               );
+

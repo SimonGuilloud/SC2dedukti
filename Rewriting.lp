@@ -1,6 +1,23 @@
 require open lisa2dedukti.FOL;
 require open lisa2dedukti.prelude;
-require open lisa2dedukti.SequentCalculus;
+
+
+
+constant symbol RedForm : TYPE;
+constant symbol redForm : Set;
+rule τ redForm ↪ RedForm;
+
+symbol norm : Formula → RedForm;
+
+constant symbol RedTop : RedForm;
+constant symbol RedBot : RedForm;
+constant symbol RedOr : (List redForm) → RedForm;
+constant symbol RedNeg : RedForm → RedForm;
+constant symbol RedForall : (Term → RedForm) → RedForm;
+constant symbol RedExists : (Term → RedForm) → RedForm;
+
+
+
 // ≔ λ x, prf (seq (ϕ x) (ψ x)) → prf (seq (ϕ t) (ψ t)) ;
 
 // Builtin
@@ -20,26 +37,44 @@ rule Or Nil ↪ Top;
 
 // A2 - Associativité
 
-symbol norm : Formula → Formula;
-symbol flatten : List formula → List formula ;
+symbol flatFormula : Formula → RedForm;
+symbol flatten : List formula → List redForm ;
+
+rule flatFormula (Or $l) ↪ (RedOr (flatten $l));
+rule flatFormula (Neg $x) ↪ (RedNeg (flatFormula $x));
+rule flatFormula Top ↪ RedTop;
+rule flatFormula Bot ↪ RedBot;
+
 rule flatten Nil ↪ Nil;
 rule flatten ((Or $l1) ⸬ $l2) ↪ append (flatten $l1) (flatten $l2);
-rule flatten ((Neg $x) ⸬ $l) ↪ (Neg (norm $x)) ⸬ (flatten $l);
-rule flatten (Bot ⸬ $l) ↪ Bot ⸬ (flatten $l);
-rule flatten (Top ⸬ $l) ↪ Bot ⸬ (flatten $l);
+rule flatten ($x ⸬ $l) ↪ (flatFormula $x) ⸬ (flatten $l);
+/*
+rule flatten ((Neg $x) ⸬ $l) ↪ (RedNeg (flatFormula $x)) ⸬ (flatten $l);
+rule flatten (Bot ⸬ $l) ↪ RedBot ⸬ (flatten $l);
+rule flatten (Top ⸬ $l) ↪ RedTop ⸬ (flatten $l);
+*/
+rule norm $f ↪ flatFormula $f;
 
-// rule norm (Or ((Or $l1) ⸬ $l2)) ↪ Or (append (norm $l1) (norm $l2));
-// rule Or ((Or $l1) ⸬ $l2) ↪ Or (append $l1 $l2);
+compute norm (Or (Or (Top ⸬ (Or ((Neg Top) ⸬ Top ⸬ Nil) ) ⸬ Nil) ⸬ Bot ⸬ (Or (Bot ⸬ (Neg Bot) ⸬ Nil)) ⸬ Nil));
 
-rule norm (Or ((Or $l1) ⸬ $l2)) ↪ Or (append (flatten $l1) (flatten $l2)) ;
+compute  λ (x:Formula), (norm (Or (x ⸬ (Or (Top ⸬ Bot ⸬ Nil)) ⸬ Nil)));
+compute  λ (x:Formula), (norm (Or (x ⸬ Top ⸬ Bot ⸬ Nil)));
 
-compute norm (Or (Or (Top ⸬ Nil) ⸬ Bot ⸬ (Or (Bot ⸬ Nil)) ⸬ Nil));
 
-rule Or ($x ⸬ Nil) ↪ $x;
+
+
+symbol RemoveDuplicate : RedForm → RedForm;
+symbol RemoveX (x:RedForm) (l: List redForm): RedForm;
+
+//rule RemoveX $x ($y ⸬ $l) ↪ 
+
 
 // A3 -
 // rule Or
 
+
+
+/*
 // A4 -
 // rule
 
@@ -50,3 +85,4 @@ rule Neg (Neg $x) ↪ $x;
 rule Neg Bot ↪ Top;
 rule Neg Top ↪ Bot;
 
+*/
