@@ -133,6 +133,9 @@ constant symbol LeftRefl Γ t Δ : prf (seq ((Equality t t) ⸬ Γ) Δ) → prf 
 constant symbol RightRefl t : prf (seq Nil ((Equality t t) ⸬ Nil));
 
 
+symbol Inst (Γ Δ : List formula) (ϕ ψ : Term → Formula) t : (Π (x : Term), prf (seq ((ϕ x) ⸬ Γ) ((ψ x) ⸬ ))) → prf (seq ((ϕ t) ⸬ Nil) ((ψ t) ⸬ Nil)) ;
+// ≔ λ x, prf (seq (ϕ x) (ψ x)) → prf (seq (ϕ t) (ψ t)) ;
+
 // Builtin
 // Syntactic sugar - And, Iff, Implies, ExistsOne
 
