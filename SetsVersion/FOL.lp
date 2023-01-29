@@ -29,6 +29,13 @@ rule (SingleF $x) ∪ ((SingleF $x) ∪ $l) ↪ SingleF $x ∪ $l;
 rule $s ∪ EmptyF ↪ $s;
 rule EmptyF ∪ $s ↪ $s;
 
+symbol mapS : (Formula → Formula) → SetF → SetF;
+rule mapS _ EmptyF ↪ EmptyF;
+rule mapS $f (SingleF $x) ↪ SingleF ($f $x);
+rule mapS $f ($x ** $s) ↪ ($f $x) ** (mapS $f $s);
+
+
+
 
 
 /*
@@ -49,9 +56,25 @@ constant symbol Bot : Formula;
 symbol Neg : Formula → Formula;
 symbol Implies : Formula → Formula → Formula;
 symbol Iff : Formula → Formula → Formula;
-symbol And : SetF → Formula;
-symbol Or  : SetF → Formula;
 
+//Disjonction
+associative commutative symbol ∨ : Formula → Formula → Formula;
+notation ∨ infix right 30;
+associative commutative symbol ∧ : Formula → Formula → Formula;
+notation ∧ infix right 30;
+
+symbol set2and : SetF → Formula;
+
+rule set2and EmptyF ↪ Top;
+rule set2and (SingleF $x) ↪ $x;
+rule set2and ($x ∪ $y) ↪ (set2and $x) ∧ (set2and $y);
+
+
+symbol set2or : SetF → Formula;
+
+rule set2or EmptyF ↪ Bot;
+rule set2or (SingleF $x) ↪ $x;
+rule set2or ($x ∪ $y) ↪ (set2or $x) ∧ (set2or $y);
 
 
 
@@ -71,4 +94,4 @@ symbol myfirst-sequent ≔ λ x : Formula,  λ y : Formula, seq  (SingleF (Neg x
 constant symbol prf : Sequent → TYPE;
 
 
-compute (Top ** Top ** Bot ** (And (SingleF Bot)) ** Top ** EmptyF) ∪ (Top ** Bot ** Top ** EmptyF);
+compute ((Top ** Top ** Bot ** (Bot ∧ Top) ** EmptyF) ∪ (Top ** Bot ** Top ** EmptyF));

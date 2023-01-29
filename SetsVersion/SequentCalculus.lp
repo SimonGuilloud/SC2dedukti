@@ -6,8 +6,8 @@ constant symbol Hypothesis (ϕ : Formula) (Γ Δ: SetF) : prf (seq (ϕ ** Γ) (�
 constant symbol Cut Γ Σ Δ Ω ϕ : prf (seq Γ (ϕ ** Δ)) → prf (seq (ϕ ** Σ) Ω) → prf (seq (Γ ∪ Σ) (Δ ∪ Ω));
 
 
-constant symbol LeftAnd Γ l Δ : prf (seq (l ∪ Γ) Δ) → prf (seq ((And l) ** Γ) Δ);
-constant symbol LeftOr Γ Σ Δ Ω ϕ ψ : prf (seq (ϕ ** Γ) Δ) → prf (seq  (ψ ** Σ) Ω) → prf (seq ((Or (ϕ ** ψ ** EmptyF)) ** (Γ ∪ Σ)) (Δ ∪ Ω));
+constant symbol LeftAnd Γ l Δ : prf (seq (l ∪ Γ) Δ) → prf (seq ((set2and l) ** Γ) Δ);
+constant symbol LeftOr Γ Σ Δ Ω ϕ ψ : prf (seq (ϕ ** Γ) Δ) → prf (seq  (ψ ** Σ) Ω) → prf (seq ((ϕ ∨ ψ) ** (Γ ∪ Σ)) (Δ ∪ Ω));
 constant symbol LeftImplies Γ Σ Δ Ω ϕ ψ :  prf (seq Γ (ϕ ** Δ)) → prf (seq (ψ ** Σ) Ω) → prf (seq ((Implies ϕ ψ) ** (Γ ∪ Σ)) (Δ ∪ Ω));
 constant symbol LeftIff Γ ϕ ψ Δ : prf (seq ((Implies ϕ ψ) ** (Implies ψ ϕ) ** Γ) Δ) → prf (seq ((Iff ϕ ψ) ** Γ) Δ);
 constant symbol LeftNot Γ ϕ Δ : prf (seq Γ (ϕ ** Δ)) → prf (seq ( (Neg ϕ) ** Γ) Δ);
@@ -17,8 +17,8 @@ constant symbol LeftExistsOne Γ ϕ Δ : prf (seq ((Exists (λ y : Term, (Forall
                                       prf (seq ((ExistsOne ϕ ** Γ)) Δ);
 
 
-constant symbol RightAnd Γ Σ Δ Ω ϕ ψ : prf (seq Γ (ϕ ** Δ)) → prf (seq  Σ (ψ ** Ω)) → prf (seq (Γ ∪ Σ)  (And (ϕ ** ψ ** EmptyF) ** (Δ ∪ Ω)) );
-constant symbol RightOr Γ l Δ : prf (seq Γ (l ∪ Δ)) → prf (seq Γ ((Or l) ** Δ));
+constant symbol RightAnd Γ Σ Δ Ω ϕ ψ : prf (seq Γ (ϕ ** Δ)) → prf (seq  Σ (ψ ** Ω)) → prf (seq (Γ ∪ Σ)  ((ϕ ∧ ψ) ** (Δ ∪ Ω)) );
+constant symbol RightOr Γ l Δ : prf (seq Γ (l ∪ Δ)) → prf (seq Γ ((set2or l) ** Δ));
 constant symbol RightImplies Γ ϕ ψ Δ : prf (seq (ϕ ** Γ) (ψ ** Δ)) → prf (seq Γ ((Implies ϕ ψ) ** Δ));
 constant symbol RightIff Γ Σ Δ Ω ϕ ψ : prf (seq Γ ((Implies ϕ ψ) ** Δ)) → prf (seq  Σ ((Implies ψ ϕ) ** Ω)) → prf (seq (Γ ∪ Σ) ((Iff ϕ ψ) ** (Δ ∪ Ω)));
 constant symbol RightNot Γ ϕ Δ : prf (seq (ϕ ** Γ) Δ) → prf (seq  Γ ((Neg ϕ) ** Δ));
