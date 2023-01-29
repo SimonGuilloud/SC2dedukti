@@ -1,4 +1,4 @@
-require open lisa2dedukti.prelude;
+require open lisa2dedukti.SetsVersion.prelude;
 constant symbol Formula : TYPE;
 constant symbol formula : Set;
 rule τ formula ↪ Formula;
@@ -9,6 +9,25 @@ rule τ term ↪ Term;
 
 constant symbol Id: TYPE;
 constant symbol 0:Id;
+
+
+
+// Sets
+
+
+constant symbol SetF: TYPE;
+constant symbol EmptyF : SetF;
+constant symbol SingleF : Formula → SetF;
+//associative commutative symbol ** : Formula → SetF → SetF;
+associative commutative symbol ∪ : SetF → SetF → SetF;
+notation ∪ infix right 20;
+symbol ** ϕ s ≔ (SingleF ϕ) ∪ s;
+notation ** infix right 19;
+
+rule (SingleF $x) ∪ (SingleF $x) ↪ SingleF $x;
+rule (SingleF $x) ∪ ((SingleF $x) ∪ $l) ↪ SingleF $x ∪ $l;
+rule $s ∪ EmptyF ↪ $s;
+rule EmptyF ∪ $s ↪ $s;
 
 
 
@@ -30,8 +49,8 @@ constant symbol Bot : Formula;
 symbol Neg : Formula → Formula;
 symbol Implies : Formula → Formula → Formula;
 symbol Iff : Formula → Formula → Formula;
-symbol And : List formula → Formula;
-symbol Or  : List formula → Formula;
+symbol And : SetF → Formula;
+symbol Or  : SetF → Formula;
 
 
 
@@ -44,10 +63,12 @@ constant symbol Exists : (Term → Formula) → Formula;
 symbol ExistsOne : (Term → Formula) → Formula;
 
 constant symbol Sequent : TYPE;
-symbol seq : List formula → List formula → Sequent;
+symbol seq : SetF → SetF → Sequent;
 //type Implies (V x) (Or (V x) (And (V y) (V z)));
 
-symbol myfirst-sequent ≔ λ x : Formula,  λ y : Formula, seq  ((Neg x) ⸬ Nil) (y ⸬ Nil) ;
+symbol myfirst-sequent ≔ λ x : Formula,  λ y : Formula, seq  (SingleF (Neg x) ) (SingleF y) ;
 
 constant symbol prf : Sequent → TYPE;
 
+
+compute (Top ** Top ** Bot ** (And (SingleF Bot)) ** Top ** EmptyF) ∪ (Top ** Bot ** Top ** EmptyF);
