@@ -1,0 +1,54 @@
+require open lisa2dedukti.SimpleVersion.prelude;
+require open lisa2dedukti.SimpleVersion.FOL;
+require open lisa2dedukti.SimpleVersion.SequentCalculus;
+
+
+/*
+
+rule And ($x ⸬ $y) ↪ Neg (Implies $x (Neg $y));
+
+rule Or ($x ⸬ $y) ↪ Implies (Neg $x)  $y;
+
+rule (Iff $x $y) ↪ And ((Implies $x $y) ⸬ (Implies $y $x) ⸬ Nil);
+
+rule Exists $f ↪ Neg (Forall λ x, (Neg ($f x)));
+
+rule ExistsOne $f ↪ Exists (λ y, (Forall (λ x, Iff (Equality x y) ($f x))));
+
+
+//Reformulating LK rules in term of Hypothesis, LeftForall, RightForall, LeftImplies, RightImplies
+
+rule LeftAnd $Γ $l $Δ ↪ λ p: prf (seq ($l ∪ $Γ) Δ)
+
+
+
+/*
+symbol LeftAnd Γ l Δ : prf (seq (l ∪ Γ) Δ) → prf (seq ((set2and l) ** Γ) Δ);
+symbol LeftOr Γ Σ Δ Ω ϕ ψ : prf (seq (ϕ ** Γ) Δ) → prf (seq  (ψ ** Σ) Ω) → prf (seq ((ϕ ∨ ψ) ** (Γ ∪ Σ)) (Δ ∪ Ω));
+constant symbol LeftImplies Γ Σ Δ Ω ϕ ψ :  prf (seq Γ (ϕ ** Δ)) → prf (seq (ψ ** Σ) Ω) → prf (seq ((Implies ϕ ψ) ** (Γ ∪ Σ)) (Δ ∪ Ω));
+symbol LeftIff Γ ϕ ψ Δ : prf (seq ((Implies ϕ ψ) ** (Implies ψ ϕ) ** Γ) Δ) → prf (seq ((Iff ϕ ψ) ** Γ) Δ);
+symbol LeftNot Γ ϕ Δ : prf (seq Γ (ϕ ** Δ)) → prf (seq ( (Neg ϕ) ** Γ) Δ);
+constant symbol LeftForall Γ ϕ t Δ : prf (seq ((ϕ t) ** Γ) Δ) → prf (seq ((Forall ϕ) ** Γ) Δ);
+symbol LeftExists Γ ϕ Δ : (Π x:Term, prf (seq ((ϕ x) ** Γ) Δ)) → prf (seq ((Exists ϕ) ** Γ) Δ);
+symbol LeftExistsOne Γ ϕ Δ : prf (seq ((Exists (λ y : Term, (Forall (λ x : Term, (Iff (Equality x y) (ϕ x)))))) ** Γ) Δ) → prf (seq ((ExistsOne ϕ ** Γ)) Δ);
+
+
+
+
+
+symbol fprf : Formula → TYPE;
+constant symbol Nothing : TYPE;
+symbol Something ≔ Nothing → Nothing;
+symbol Some ≔ λ (x : Nothing), x;
+
+
+rule fprf (Neg $x) ↪ fprf $x → Nothing;
+rule fprf (Implies $x $y) ↪ fprf $x → fprf $y;
+
+
+
+
+rule prf (seq $l1 $l2) ↪ (fprf (Implies (And $l1) (Or $l2)));
+
+rule prf (seq ($ϕ ⸬ $l1) ($ϕ ⸬ $l2)) ↪ prf (seq ($l1) ($l2));
+*/
