@@ -119,11 +119,6 @@ symbol LeftExistsOneProof Γ ϕ Δ : prf (seq ((Exists (λ y : Term, (Forall (λ
 
 
 
-//(LeftNot Γ (Implies ϕ (Neg ψ)) Δ 
-                                                              //(RightImplies Γ ϕ (Neg ψ) Δ
-//symbol LeftAnd Γ ϕ ψ Δ : prf (seq (ϕ ⸬ ψ ⸬ Γ) Δ) → prf (seq ((ϕ ∧ ψ) ⸬ Γ) Δ);
-
-
 
 /*
 
@@ -140,8 +135,26 @@ symbol LeftExistsOne Γ ϕ Δ : prf (seq ((Exists (λ y : Term, (Forall (λ x : 
 
 
 
+
+*/
+
+
+
 symbol fprf : Formula → TYPE;
 constant symbol Nothing : TYPE;
+symbol not2 ≔ Π (r:TYPE), r;
+rule efq $t ↪ Nothing → t;
+symbol efq:  Π a, Nothing → τ a;
+
+symbol Truc : TYPE;
+symbol efqtruc : Nothing → Truc;
+
+a and b ↪ (a → (b→ Nothing)) → Nothing;
+
+f : ((a → Noting) → Nothing) → a;
+
+
+
 symbol Something ≔ Nothing → Nothing;
 symbol Some ≔ λ (x : Nothing), x;
 
@@ -151,8 +164,16 @@ rule fprf (Implies $x $y) ↪ fprf $x → fprf $y;
 
 
 
+rule prf (seq Nil Nil) ↪ Nothing;
+rule prf (seq Nil ($x ⸬ $l)) ↪ ((fprf $x) → Nothing) → (prf (seq Nil $l));
+rule prf (seq ($x ⸬ $l1) $l2) ↪ (fprf $x) → (prf (seq $l1 $l2));
+type Hypothesis;
+type λ ϕ, (Hypothesis ϕ Nil Nil);
+compute Π ϕ: τ formula, prf (seq (ϕ ⸬ Nil) (ϕ ⸬ Nil));
 
-rule prf (seq $l1 $l2) ↪ (fprf (Implies (And $l1) (Or $l2)));
-
-rule prf (seq ($ϕ ⸬ $l1) ($ϕ ⸬ $l2)) ↪ prf (seq ($l1) ($l2));
-*/
+//Π ϕ: Formula, fprf ϕ → (fprf ϕ → Nothing) → Nothing λ x h1 h2, h2 h1
+rule Hypothesis $ϕ Nil Nil ↪  λ (h1 : fprf $ϕ) (h2 : fprf $ϕ → Nothing), h2 h1;
+type λ ϕ x l, Hypothesis ϕ Nil (x ⸬ l);
+compute Π ϕ: τ formula, Π x: τ formula, Π l: List formula, prf (seq (ϕ ⸬ Nil) (ϕ ⸬ (x ⸬ l)));
+ //Π ϕ: Formula, Π x: Formula, Π l: List formula, fprf ϕ → (fprf ϕ → Nothing) → (fprf x → Nothing) → prf (seq Nil l)
+//rule Hypothesis $ϕ Nil ($x ⸬ $l) ↪
