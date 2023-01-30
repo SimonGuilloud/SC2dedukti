@@ -6,3 +6,27 @@
 (OL : Wait for possible CTRS features) Amelie shows Simon
 
 Yassine lambdapi-logics Zenon LL
+
+
+
+Monday:
+Toutes les règles sauf SubstIff sont traduites dans les regles des bases (Implies, Not, Forall, Weakening, Swap?, Hypothesis, Cut, equality rules ?)
+Une des régles a besoin de "prouver" une rewrite rule, (swap + enumerate) pas d'alternative?
+private constructors or soundness?
+Custom order in Dedukti?
+Question: Que peut-on formaliser de ces règles dans La logique minimale (typed lambda calcul)
+
+
+Traduire dans la deduction naturelle? Autres systemes ? (universel)
+
+
+Ecrire un petit papier, draft
+
+
+plus long term, LISA trad;
+
+
+
+Ressources:
+https://lipn.univ-paris13.fr/~mazza/teaching/ProofTheoryNotes.pdf
+https://ncatlab.org/nlab/show/minimal+logic
