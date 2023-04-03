@@ -1,0 +1,26 @@
+require open lisa2dedukti.SimpleVersion.FOL;
+require open lisa2dedukti.SimpleVersion.prelude;
+require open lisa2dedukti.SimpleVersion.SequentCalculus;
+
+//This files interpret sequents into functions over formulas.
+
+
+symbol seq2form : List formula → Formula → Formula;
+
+
+rule seq2form  Nil $x ↪ $x;
+rule seq2form  ($x ⸬ $l) $y ↪ seq2form $l (Implies $x $y);
+
+//Intuitionistic rule
+rule prf (seq $l Nil) ↪ prf (seq $l (Bot ⸬ Nil));
+//Classical rule
+rule prf (seq $l ($x ⸬ Nil)) ↪ prf (seq $l (Bot ⸬ Nil));
+
+
+
+//rule RightImplies Nil _ _ Nil ↪ λ x y, (Implies x y);
+rule RightImplies (_ ⸬ $l) $ϕ $ψ Nil ↪ λ π x, (RightImplies $l $ϕ $ψ Nil) λ q, π q x ;
+
+rule Cut Nil Nil Nil (_ ⸬ Nil) _ ↪ λ π1 π2, π2 π1;
+rule Cut (_ ⸬ $l) Nil Nil ($f ⸬ Nil) $ϕ ↪ λ π1 π2 x, Cut $l Nil Nil ($f ⸬ Nil) $ϕ (π1 x) π2;
+
