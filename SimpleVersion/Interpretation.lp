@@ -19,13 +19,10 @@ rule ExistsOne $f ↪ Exists (λ y, (Forall (λ x, Iff (Equality x y) ($f x))));
 type LeftAnd;
 compute Π Γ: List formula, Π ϕ: Formula, Π ψ: Formula, Π Δ: List formula, prf (seq (ϕ ⸬ (ψ ⸬ Γ)) Δ) → prf (seq ((ϕ ∧ ψ) ⸬ Γ) Δ);
 
-// count elements in a list and replace them
-symbol enumerate (n: Nat) : List formula → List nat ;
-rule enumerate $n Nil ↪ Nil;
-rule enumerate $n ($x ⸬ $l) ↪ $n ⸬ (enumerate (S $n) $l);
 
 
-//TOTO: Proof
+
+//This is a theorem that always holds. Translation needs to reduce it.
 rule (swap-multi (enumerate 2 $Γ) $Γ ($ψ ⸬ ($ϕ ⸬ Nil))) ↪ ($ψ ⸬ ($ϕ ⸬ $Γ));
 
 symbol test ϕ ψ Γ Δ ≔ SwapLeft (ϕ ⸬ ψ ⸬ Γ) Δ (1 ⸬ 0 ⸬ (enumerate 2 Γ));
@@ -138,7 +135,7 @@ symbol LeftExistsOne Γ ϕ Δ : prf (seq ((Exists (λ y : Term, (Forall (λ x : 
 
 */
 
-
+/*
 
 symbol fprf : Formula → TYPE;
 constant symbol Nothing : TYPE;
@@ -177,3 +174,4 @@ type λ ϕ x l, Hypothesis ϕ Nil (x ⸬ l);
 compute Π ϕ: τ formula, Π x: τ formula, Π l: List formula, prf (seq (ϕ ⸬ Nil) (ϕ ⸬ (x ⸬ l)));
  //Π ϕ: Formula, Π x: Formula, Π l: List formula, fprf ϕ → (fprf ϕ → Nothing) → (fprf x → Nothing) → prf (seq Nil l)
 //rule Hypothesis $ϕ Nil ($x ⸬ $l) ↪
+*/

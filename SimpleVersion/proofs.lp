@@ -13,6 +13,7 @@ symbol pierce3 ϕ ψ ≔ (LeftImplies Nil Nil (ϕ ⸬ Nil) (ϕ ⸬ Nil) (Implies
 
 symbol pierce4 ϕ ψ ≔ (RightImplies Nil (Implies (Implies ϕ ψ) ϕ) ϕ Nil (pierce3 ϕ ψ));
 
+type pierce4;
 
 
 
@@ -34,3 +35,4 @@ symbol russel7 ϕ ≔ LeftIff Nil (Neg ϕ) ϕ Nil (russel6 ϕ);
 
 symbol russel8 y R : (prf (seq ((Forall (λ x, (Iff (Neg (R x x)) (R x y)))) ⸬ Nil) Nil)) ≔ LeftForall Nil (λ x, (Iff (Neg (R x x)) (R x y))) y Nil (russel7 (R y y)) ;
 
+type russel8;

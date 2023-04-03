@@ -32,6 +32,7 @@ rule EmptyF ∪ $s ↪ $s;
 symbol mapS : (Formula → Formula) → SetF → SetF;
 rule mapS _ EmptyF ↪ EmptyF;
 rule mapS $f (SingleF $x) ↪ SingleF ($f $x);
+rule mapS $f ($s ∪ $t) ↪ (mapS $f $s) ∪ (mapS $f $t);
 rule mapS $f ($x ** $s) ↪ ($f $x) ** (mapS $f $s);
 
 
