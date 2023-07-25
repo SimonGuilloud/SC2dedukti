@@ -4,32 +4,46 @@ require open lisa2dedukti.SimpleVersion.SequentCalculus;
 require open lisa2dedukti.SimpleVersion.InterpretationMinimalistic;
 require open lisa2dedukti.SimpleVersion.InterpretationIntuitionistic;
 
-//Here we extend the intuitionistic logic interpretation to  classical logic
+// Here we extend the intuitionistic interpretation to classical logic
 
-//First, we need to interpret Sequents with arbitrary many elements on the right
+// We remind the interpretation of formulas proofs into TYPE
 
-rule prf (seq Nil ($x ⸬ $y ⸬ $Δ)) ↪ Π γ, (fprf $x → fprf γ) → (prf (seq Nil ($y ⸬ $Δ)) → fprf γ) → fprf γ;
+//rule fprf (Implies $ϕ $ψ) ↪ fprf $ϕ → fprf $ψ;
+//rule fprf (Forall $P) ↪ Π x : Term, fprf ($P x);
+//rule fprf (Equality $x $y) ↪ Π r : Term → Formula, fprf (r $x) → fprf (r $y);
+//rule fprf Top ↪ Π f, (fprf f) → (fprf f);
+//rule fprf Bot ↪ Π f, fprf f;
+//rule fprf ($ϕ ∧ $ψ) ↪ Π γ, (fprf $ϕ → fprf $ψ → fprf γ) → fprf γ;
+//rule fprf ($ϕ ∨ $ψ) ↪ Π γ, (fprf $ϕ → fprf γ) → (fprf $ψ → fprf γ) → fprf γ;
+//rule fprf (Exists $p) ↪  Π r, (Π x, (fprf ($p x) → fprf r)) → fprf r;
+//rule fprf (Neg $ϕ) ↪ fprf (Implies $ϕ Bot);
+//rule fprf (Iff $ϕ $ψ) ↪ fprf ((Implies $ϕ $ψ) ∧ (Implies $ψ $ϕ));
+//rule fprf (ExistsOne $p) ↪ fprf (Exists (λ y : Term, (Forall (λ x : Term, (Iff (Equality x y) ($p x))))));
 
+// And the interpretation of sequents:
 
-//We assume the excluded middle:
-symbol ExclMiddle : Π a : Formula, fprf (a ∨ (Neg a));
+//rule prf (seq Nil ($x ⸬ Nil)) ↪ fprf ($x);
+//rule prf (seq ($y ⸬ $l)  ($x ⸬ Nil)) ↪ (fprf $y) → prf (seq $l  ($x ⸬ Nil));
+//rule prf (seq $Γ Nil) ↪ prf (seq $Γ (Bot ⸬ Nil));
+//rule prf (seq Nil ($x ⸬ $y ⸬ $Δ)) ↪ prf (seq Nil (($x ∨ $y) ⸬ $Δ));
+//rule prf (seq ($z ⸬ $l)  ($x ⸬ $y ⸬ $Δ)) ↪ (fprf $z) → prf (seq $l  ($x ⸬ $y ⸬ $Δ));
 
+// In classical logic, sequents are unrestricted: Both sdes can contain an arbitrary number of formulas.
+
+// Remember we assume Propositional Extensionality:
 //symbol PropEq ≔ λ ϕ ψ, (Π r: Formula → Formula, fprf (r ϕ) → fprf (r ψ));
 //symbol PropExt : Π ϕ ψ, (fprf (Iff ϕ ψ)) → PropEq ϕ ψ;
 
-//Lemmas about symetry of Equality and Iff are needed to reduce substitution rules.
-symbol symEq : Π s t,  fprf (Equality s t) → fprf (Equality t s) ≔ λ s t eqst, eqst (λ y, Equality y s) (λ r i, i);
-symbol symPropEq : Π f g,  PropEq f g → PropEq g f ≔ λ f g eqfg, PropExt g f (eqfg (λ y, Iff y f) (λ γ p, p (λ x, x) (λ x, x)));
-
+// And now we also need excluded middle:
+symbol exclMiddle: Π ϕ:Formula, fprf (ϕ ∨ (Neg ϕ));
 
 
 
 
 
 //Intuitionistic rules
-//We extend the minimalistic interpretation with:
-//  a. Cases where the right-hand-side of the conclusion sequents of strong rules contains at most 1 unique element (i.e. if it contains 2 formulas, they must be the same formulas)
-//  b. Rules for all symbols
+//We extend the Intuitionistic interpretation with:
+//  a. Cases where the right hand side of the conclusion of a strong rule contains arbitraily manz arguments.
 
 
 //      Weak rules (structural)

@@ -8,13 +8,15 @@ require open lisa2dedukti.SimpleVersion.InterpretationMinimalistic;
 //First, we need to interpret Sequents with 0 elements on the right hand side
 
 //injective symbol fprf : Formula → TYPE;
+rule prf ($Γ ⊧ Nil) ↪ prf ($Γ ⊧ (Bot ⸬ Nil));
+//Then, we interpret formulas with multiple formulas on the right hand side
+rule prf (Nil ⊧ ($x ⸬ $y ⸬ $Δ)) ↪ prf (Nil ⊧ (($x ∨ $y) ⸬ $Δ));
+rule prf (($z ⸬ $l) ⊧ ($x ⸬ $y ⸬ $Δ)) ↪ (fprf $z) → prf ($l ⊧ ($x ⸬ $y ⸬ $Δ));
 
-rule prf (seq $Γ Nil) ↪ prf (seq $Γ (Bot ⸬ Nil));
+//One characterization of intuitionistic logic is that no strong rule has a conclusion whose 
+//right hand side contains more than 2 formulas
 
-rule prf (seq Nil ($x ⸬ $y ⸬ Nil)) ↪ prf (seq Nil (($x ∨ $y) ⸬ Nil));
-rule prf (seq ($z ⸬ $l)  ($x ⸬ $y ⸬ $Δ)) ↪ (fprf $z) → prf (seq $l  ($x ⸬ $y ⸬ $Δ));
-
-//Implies and Forall are already interpreted, we interpret other symbols using impredicative definitions.
+//Implies and Forall are already interpreted in the minimal fragment, we interpret other symbols using impredicative definitions.
 
 //rule fprf (Implies $ϕ $ψ) ↪ fprf $ϕ → fprf $ψ;
 //rule fprf (Forall $P) ↪ Π x : Term, fprf ($P x);

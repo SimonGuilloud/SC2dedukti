@@ -26,12 +26,12 @@ symbol ExistsOne : (Term → Formula) → Formula;
 
 
 symbol Sequent : TYPE;
-symbol seq : List formula → List formula → Sequent;
+symbol ⊧ : List formula → List formula → Sequent;
+notation ⊧ infix 50;
+
 
 symbol prf : Sequent → TYPE;
 
-
-//symbol myfirstsequent ≔ λ x : Formula,  λ y : Formula, seq  ((Neg x) ⸬ Nil) (y ⸬ Nil) ;
 
 
 
