@@ -16,7 +16,8 @@ symbol ContractRight x Γ Δ : prf (Γ ⊧ (x ⸬ x ⸬ Δ) ) → prf (Γ ⊧ (x
 
 symbol Cut Γ Σ Δ Ω ϕ : prf (Γ ⊧ (ϕ ⸬ Δ)) → prf ((ϕ ⸬ Σ) ⊧ Ω) → prf ((append Γ Σ) ⊧ (append Δ Ω));
 
-symbol LeftAnd Γ ϕ ψ Δ : prf ((ϕ ⸬ ψ ⸬ Γ) ⊧ Δ) → prf (((ϕ ∧ ψ) ⸬ Γ) ⊧ Δ);
+symbol LeftAnd1 Γ ϕ ψ Δ : prf ((ϕ ⸬ Γ) ⊧ Δ) → prf (((ϕ ∧ ψ) ⸬ Γ) ⊧ Δ);
+symbol LeftAnd2 Γ ϕ ψ Δ : prf ((ϕ ⸬ Γ) ⊧ Δ) → prf (((ψ ∧ ϕ) ⸬ Γ) ⊧ Δ);
 symbol LeftOr Γ Σ Δ Ω ϕ ψ : prf ((ϕ ⸬ Γ) ⊧ Δ) → prf ( (ψ ⸬ Σ) ⊧ Ω) → prf (((ϕ ∨ ψ) ⸬ (append Γ Σ)) ⊧ (append Δ Ω));
 symbol LeftImplies Γ Σ Δ Ω ϕ ψ :  prf (Γ ⊧ (ϕ ⸬ Δ)) → prf ((ψ ⸬ Σ) ⊧ Ω) → prf (((Implies ϕ ψ) ⸬ (append Γ Σ)) ⊧ (append Δ Ω));
 symbol LeftIff Γ ϕ ψ Δ : prf (((Implies ϕ ψ) ⸬ (Implies ψ ϕ) ⸬ Γ) ⊧ Δ) → prf (((Iff ϕ ψ) ⸬ Γ) ⊧ Δ);
@@ -26,7 +27,8 @@ symbol LeftExists Γ ϕ Δ : (Π x:Term, prf (((ϕ x) ⸬ Γ) ⊧ Δ)) → prf (
 symbol LeftExistsOne Γ ϕ Δ : prf (((Exists (λ y : Term, (Forall (λ x : Term, (Iff (Equality x y) (ϕ x)))))) ⸬ Γ) ⊧ Δ) → prf (((ExistsOne ϕ ⸬ Γ)) ⊧ Δ);
 
 symbol RightAnd Γ Σ Δ Ω ϕ ψ : prf (Γ ⊧ (ϕ ⸬ Δ)) → prf ( Σ ⊧ (ψ ⸬ Ω)) → prf ((append Γ Σ) ⊧ ((ϕ ∧ ψ) ⸬ (append Δ Ω)));
-symbol RightOr Γ ϕ ψ Δ : prf (Γ ⊧ (ϕ ⸬ ψ ⸬ Δ)) → prf (Γ ⊧ ((ϕ ∨ ψ) ⸬ Δ));
+symbol RightOr1 Γ ϕ ψ Δ : prf (Γ ⊧ (ϕ ⸬ Δ)) → prf (Γ ⊧ ((ϕ ∨ ψ) ⸬ Δ));
+symbol RightOr2 Γ ϕ ψ Δ : prf (Γ ⊧ (ϕ ⸬ Δ)) → prf (Γ ⊧ ((ψ ∨ ϕ) ⸬ Δ));
 symbol RightImplies Γ ϕ ψ Δ : prf ((ϕ ⸬ Γ) ⊧ (ψ ⸬ Δ)) → prf (Γ ⊧ ((Implies ϕ ψ) ⸬ Δ));
 symbol RightIff Γ Σ Δ Ω ϕ ψ : prf (Γ ⊧ ((Implies ϕ ψ) ⸬ Δ)) → prf (Σ ⊧ ((Implies ψ ϕ) ⸬ Ω)) → prf ((append Γ Σ) ⊧ ((Iff ϕ ψ) ⸬ (append Δ Ω)));
 symbol RightNot Γ ϕ Δ : prf ((ϕ ⸬ Γ) ⊧ Δ) → prf (Γ ⊧ ((Neg ϕ) ⸬ Δ));

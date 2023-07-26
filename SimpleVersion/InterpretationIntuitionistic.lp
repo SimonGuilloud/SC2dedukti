@@ -10,11 +10,11 @@ require open lisa2dedukti.SimpleVersion.InterpretationMinimalistic;
 //injective symbol fprf : Formula → TYPE;
 rule prf ($Γ ⊧ Nil) ↪ prf ($Γ ⊧ (Bot ⸬ Nil));
 //Then, we interpret formulas with multiple formulas on the right hand side
-rule prf (Nil ⊧ ($x ⸬ $y ⸬ $Δ)) ↪ prf (Nil ⊧ (($x ∨ $y) ⸬ $Δ));
-rule prf (($z ⸬ $l) ⊧ ($x ⸬ $y ⸬ $Δ)) ↪ (fprf $z) → prf ($l ⊧ ($x ⸬ $y ⸬ $Δ));
+//rule prf (Nil ⊧ ($x ⸬ $y ⸬ $Δ)) ↪ prf (Nil ⊧ (($x ∨ $y) ⸬ $Δ));
+//rule prf (Nil ⊧ ($x ⸬ $y ⸬ $Δ)) ↪ Π γ, (fprf $x → fprf γ) → (prf (Nil ⊧ ($y ⸬ $Δ)) → (fprf γ)) → (fprf γ);
+//rule prf (($z ⸬ $l) ⊧ $Δ) ↪ (fprf $z) → prf ($l ⊧ $Δ);
 
-//One characterization of intuitionistic logic is that no strong rule has a conclusion whose 
-//right hand side contains more than 2 formulas
+//One characterization of intuitionistic logic is that no sequent in a proof has more than 1 formulas on the right hand side.
 
 //Implies and Forall are already interpreted in the minimal fragment, we interpret other symbols using impredicative definitions.
 
@@ -66,14 +66,66 @@ symbol symPropEq : Π f g,  PropEq f g → PropEq g f ≔ λ f g eqfg, PropExt g
 //rule Swap2Left ($x ⸬ Nil) _ _ ↪ λ x, x;
 //rule Swap2Left ($x ⸬ $y ⸬ $l) (_ ⸬ Nil) 0 ↪ λ p x y, p y x;
 //rule Swap2Left ($x ⸬ $y ⸬ $l) ($f ⸬ Nil) (S $n) ↪ λ p x, Swap2Left ($y ⸬ $l) ($f ⸬ Nil) $n (p x) ;
-rule Swap2Left ($x ⸬ $y ⸬ $l) Nil (S $n) ↪ λ p x, Swap2Left ($y ⸬ $l) Nil $n (p x) ;
-//symbol Swap2Right Γ Δ (n : Nat) : prf (seq Γ Δ) → prf (seq Γ (swap2 Δ n));
-//In minimalistic and Intuitionistic logic, Swap2Right can only be trivial
+rule Swap2Left ($x ⸬ $y ⸬ $l) $Δ (S $n) ↪ λ p x, Swap2Left ($y ⸬ $l) $Δ $n (p x) ;
 
+//symbol Swap2Right Γ Δ (n : Nat) : prf (seq Γ Δ) → prf (seq Γ (swap2 Δ n));
 //rule Swap2Right _ (_ ⸬ Nil) _ ↪ λ x, x;
 rule Swap2Right _ Nil _ ↪ λ x, x;
+type λ x y d Δ, Swap2Right Nil (x ⸬ y ⸬ d ⸬ Δ) 0;
+compute Π x: τ formula, Π y: τ formula, Π d: τ formula, Π Δ: List formula, prf (Nil ⊧ (x ⸬ (y ⸬ (d ⸬ Δ)))) → prf (Nil ⊧ swap2 (x ⸬ (y ⸬ (d ⸬ Δ))) 0);
+/*Π x: Formula, Π y: Formula, Π d: Formula, Π Δ: List formula,
+        (
+            Π γ: Formula, 
+            (fprf x → fprf γ) → 
+            ((Π γ1: Formula, (fprf y → fprf γ1) → (prf (Nil ⊧ (d ⸬ Δ)) → fprf γ1) → fprf γ1) → fprf γ) 
+                → fprf γ
+        ) →
+         Π γ: Formula,
+        (fprf y → fprf γ) →
+        (
+            (Π γ1: Formula, (fprf x → fprf γ1) → (prf (Nil ⊧ (d ⸬ Δ)) → fprf γ1) → fprf γ1)
+                → fprf γ
+        )
+          → fprf γ*/
 rule Swap2Right Nil ($x ⸬ $y ⸬ Nil) 0 ↪ λ f d a b, f d b a;
+symbol perfd : Π x y z, fprf (x ∨ (y ∨ z)) → (fprf (y ∨ (x ∨ z))) ≔ 
+ begin
+   assume x y z pxyz γ pyγ pxzγ;
+   apply pxyz γ
+    { assume px;
+      apply pxzγ;
+      assume γ1 px1 pz1 ;
+      refine px1 px; }
+    { assume pyz;
+      apply pyz γ 
+        { refine pyγ;  } 
+        { assume pz;
+          apply pxzγ;
+          assume γ1 px1 pz1 ;
+          refine pz1 pz; };
+     };
+ end;
+/*Π x: Formula, Π y: Formula, Π d: Formula, Π Δ: List formula,
+     (Π γ: Formula, (fprf x → fprf γ) → ((Π γ1: Formula, (fprf y → fprf γ1) → (prf (Nil ⊧ (d ⸬ Δ)) → fprf γ1) → fprf γ1) → fprf γ) → fprf γ) → 
+     Π γ: Formula, 
+     (fprf y → fprf γ) → 
+     ((Π γ1: Formula, (fprf x → fprf γ1) → (prf (Nil ⊧ (d ⸬ Δ)) → fprf γ1) → fprf γ1) → fprf γ) → 
+     fprf γ*/
+type λ x y d Δ, Swap2Right Nil (x ⸬ y ⸬ d ⸬ Δ) 0;
+compute Π x: τ formula, Π y: τ formula, Π d: τ formula, Π Δ: List formula, prf (Nil ⊧ (x ⸬ (y ⸬ (d ⸬ Δ)))) → prf (Nil ⊧ swap2 (x ⸬ (y ⸬ (d ⸬ Δ))) 0);
+//rule Swap2Right Nil ($x ⸬ $y ⸬ $d ⸬ $Δ) 0 ↪ perfd $x $y  ;
+rule Swap2Right Nil ($x ⸬ $y ⸬ $d ⸬ $Δ) 0 ↪ λ pxyz γ pyγ pxzγ, (pxyz γ (λ px, pxzγ (λ γ1 px1 pz1, px1 px))  (λ pyz, pyz γ pyγ (λ pz, pxzγ (λ γ1 px1 pz1, pz1 pz)))  );
+type λ x y d Δ, Swap2Right Nil (x ⸬ y ⸬ d ⸬ Δ) (S 0);
+compute Π x: τ formula, Π y: τ formula, Π d: τ formula, Π Δ: List formula, prf (Nil ⊧ (x ⸬ (y ⸬ (d ⸬ Δ)))) → prf (Nil ⊧ swap2 (x ⸬ (y ⸬ (d ⸬ Δ))) 1);
+/*
+(Π γ: Formula, (fprf x → fprf γ) → ((Π γ1: Formula, (fprf y → fprf γ1) → (prf (Nil ⊧ (d ⸬ Δ)) → fprf γ1) → fprf γ1) → fprf γ) → fprf γ) → 
+Π γ: Formula,
+ (fprf x → fprf γ) →
+ ((Π γ1: Formula, (fprf d → fprf γ1) → (prf (Nil ⊧ (y ⸬ Δ)) → fprf γ1) → fprf γ1) → fprf γ) →
+ fprf γ*/
 rule Swap2Right Nil ($x ⸬ $y ⸬ Nil) (S $n) ↪ λ x, x;
+rule Swap2Right Nil ($x ⸬ $y ⸬ $d ⸬ $Δ) (S 0) ↪ λ p1 γ p2  ;
+
 
 
 //symbol ContractLeft x Γ Δ : prf (seq (x ⸬ x ⸬ Γ) Δ) → prf (seq (x ⸬ Γ) Δ);
@@ -154,7 +206,7 @@ rule LeftExists ($x ⸬ $Γ) $ϕ Nil ↪ λ p pef f, LeftExists $Γ $ϕ Nil  (λ
 rule LeftExists Nil $ϕ ($f ⸬ Nil) ↪ λ p pef, pef $f p;
 rule LeftExists ($f ⸬ $Γ) $ϕ ($f ⸬ Nil) ↪ λ p pef f, LeftExists $Γ $ϕ ($f ⸬ Nil) (λ x prphix, p x prphix f) pef;
 //symbol LeftExistsOne Γ ϕ Δ : prf (seq ((Exists (λ y : Term, (Forall (λ x : Term, (Iff (Equality x y) (ϕ x)))))) ⸬ Γ) Δ) → prf (seq ((ExistsOne ϕ ⸬ Γ)) Δ);
-rule LeftExistsOne $Γ $ϕ Nil ↪ λ (p : prf (seq (Exists (λ y, Forall (λ x, Iff (Equality x y) ($ϕ x))) ⸬ $Γ) Nil)), p;
+rule LeftExistsOne $Γ $ϕ Nil ↪ λ (p : prf ((Exists (λ y, Forall (λ x, Iff (Equality x y) ($ϕ x))) ⸬ $Γ) ⊧ Nil)), p;
 
 
 
