@@ -20,7 +20,8 @@ symbol LeftAnd1 Γ ϕ ψ Δ : prf ((ϕ ⸬ Γ) ⊧ Δ) → prf (((ϕ ∧ ψ) ⸬
 symbol LeftAnd2 Γ ϕ ψ Δ : prf ((ϕ ⸬ Γ) ⊧ Δ) → prf (((ψ ∧ ϕ) ⸬ Γ) ⊧ Δ);
 symbol LeftOr Γ Σ Δ Ω ϕ ψ : prf ((ϕ ⸬ Γ) ⊧ Δ) → prf ( (ψ ⸬ Σ) ⊧ Ω) → prf (((ϕ ∨ ψ) ⸬ (append Γ Σ)) ⊧ (append Δ Ω));
 symbol LeftImplies Γ Σ Δ Ω ϕ ψ :  prf (Γ ⊧ (ϕ ⸬ Δ)) → prf ((ψ ⸬ Σ) ⊧ Ω) → prf (((Implies ϕ ψ) ⸬ (append Γ Σ)) ⊧ (append Δ Ω));
-symbol LeftIff Γ ϕ ψ Δ : prf (((Implies ϕ ψ) ⸬ (Implies ψ ϕ) ⸬ Γ) ⊧ Δ) → prf (((Iff ϕ ψ) ⸬ Γ) ⊧ Δ);
+symbol LeftIff1 Γ ϕ ψ Δ : prf (((Implies ϕ ψ) ⸬ Γ) ⊧ Δ) → prf (((Iff ϕ ψ) ⸬ Γ) ⊧ Δ);
+symbol LeftIff2 Γ ϕ ψ Δ : prf (((Implies ψ ϕ) ⸬ Γ) ⊧ Δ) → prf (((Iff ϕ ψ) ⸬ Γ) ⊧ Δ);
 symbol LeftNot Γ ϕ Δ : prf (Γ ⊧ (ϕ ⸬ Δ)) → prf (( (Neg ϕ) ⸬ Γ) ⊧ Δ);
 symbol LeftForall Γ ϕ t Δ : prf (((ϕ t) ⸬ Γ) ⊧ Δ) → prf (((Forall ϕ) ⸬ Γ) ⊧ Δ);
 symbol LeftExists Γ ϕ Δ : (Π x:Term, prf (((ϕ x) ⸬ Γ) ⊧ Δ)) → prf (((Exists ϕ) ⸬ Γ) ⊧ Δ);
