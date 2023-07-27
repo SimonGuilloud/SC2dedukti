@@ -5,6 +5,7 @@
 \usepackage{amsmath}
 \usepackage{amssymb}
 \usepackage{xcolor}
+\usepackage{hyperref}
 
 \usepackage{listings}
 
@@ -45,23 +46,10 @@
 
 	\section{Preliminaries}
 
-	\subsection{The spirit of Dedukti encodings}
+	\subsection{Dedukti}
 	
 	
 	using dependent types, Curry-De Bruijn-Howard isomorphism and rewriting rules.
-	
-	\paragraph{First-order logic.} First, we In order to define FOL in Dedukti.
-	
-	The idea is the symbols \textsf{Term} and \textsf{Formula} are types as their type is TYPE. Moreover, these symbols are declared as constant to avoid rewriting.
-
-	
-	
-	First, we define the type of terms
-	This type can be extended 
-	
-	\lstinputlisting[language=Dialekto, firstnumber=last, linerange={8-8}]{SimpleVersion/FOL.lp}
-	
-	\lstinputlisting[language=Dialekto, firstnumber=last, linerange={4-4}]{SimpleVersion/FOL.lp}
 	
 
 	A formula respects the following grammar where $t ::= x~|~...~~$: \\
@@ -141,8 +129,63 @@ symbol equiv-prf A : Prf (A Iff A) := iff-ax A A (id-ax A) (id-ax A);
 	
 	However logics based on sequent calculus are less explored.
 	
+	\subsection{First Order Logic with Equality and Schematic Variables}
+	We consider first order logic with logical operators $(\neg, \land, \lor, \rightarrow, \leftrightarrow, \forall, \exists, \exists !)$, where $\exists !$ denotes the unique existential. We define the types of \textit{terms} and \textit{formulas}:
+
+	\begin{lstlisting}[language=Dialekto]
+constant symbol Term : TYPE;
+constant symbol Formula : TYPE;
+	\end{lstlisting}
+	Our encoding imposes no requirements on the structure of terms. In practice,  for every function symbol $f$ of arity $n$ in the source language, the user needs to define a corresponding symbol:
+	\begin{lstlisting}[language=Dialekto]
+constant symbol f :  Term → ... → Term
+	\end{lstlisting}
+	and similarly for predicate symbols
+	\begin{lstlisting}[language=Dialekto]
+constant symbol p :  Term → ... → Formula
+	\end{lstlisting}
+	As we consider first order logic with equality and have special rules for it, we define the equality symbol:
+	\begin{lstlisting}[language=Dialekto]
+constant symbol Equality :  Term → Term → Formula
+	\end{lstlisting}
+	And logical operators:
+	\begin{lstlisting}[language=Dialekto]
+symbol Neg : Formula → Formula;
+symbol ∧ : Formula → Formula → Formula; notation ∧ infix right 30;
+symbol ∨ : Formula → Formula → Formula; notation ∨ infix right 30;
+symbol Implies : Formula → Formula → Formula;
+symbol Iff : Formula → Formula → Formula;
+\end{lstlisting}
+%symbol Forall : (Term → Formula) → Formula;
+%symbol Exists : (Term → Formula) → Formula;
+%symbol ExistsOne : (Term → Formula) → Formula;
+%	\end{lstlisting}
+	\subsection{Higher Order Abstract Syntax}
+	Higher Order Abstract Syntax (HOAS) is an approach to make shallow encoding of a system (in our case FOL) in an other ($\lambda \Pi$) where variables of the original are represented as variable of the target system and not as syntactic objects.
 	
+	\iffalse
+	We consider first order logic with arbitrary constant function and predicate symbols. Fomally We fix:
+	\begin{itemize}
+		\item a set of constant symbols $C$ noted $f^j, g^j, h^j, f^j_i,...$ for indices $i\in \mathbb{N}$ and where the superscript $j$ denotes the \textit{arity} of the symbol
+		\item a countably infinite set of schematic function symbols $'C$ noted $ 'f^j, 'g^j, 'h^j, f^j_i,...$ for indices $i\in \mathbb{N}$ and where the superscript $j$ denotes the \textit{arity} of the symbol.
+	\end{itemize}
+	We also call schematic functions symbols of arity 0 \textit{variables}, and note them $x,y,z$.
+	The set of terms of height at most $n$ is
+	$$\mathcal{T}_0 := \lbrace f^0 \mid f^0 \in C\rbrace \cup \lbrace 'f^0 \mid 'f^0 \in C \rbrace$$
+	$$\mathcal{T}_{n+1} := \mathcal{T}_n \cup \lbrace f^j(\vec{t}) \mid f^j\in \mathcal{C}, \vec{t}\in \mathcal{T}_n^j, j>0 \rbrace \cup \lbrace 'f^j(\vec{t}) \mid 'f^j\in \mathcal{C}, \vec{t}\in \mathcal{T}_n^j, j>0 \rbrace$$
+	and the set of all termsis $\mathcal T = \bigcup_{n=0}^\infty \mathcal{T}_n$.  Moreover, we allow \textit{schematic functions, predicate and connector symbols}.
+	
+	\fi
 	\subsection{Sequent calculus}
+	The Sequent Calculus LK is a prof system for first order logic. A \textit{sequent} is a pair of ordered lists of formulas, noted
+	$$
+	\Gamma \vdash \Delta
+	$$
+	We usually use capital greek letter to denote sets of formulas. In an expression such as $\Gamma, \Sigma \vdash \phi, \Delta$, the comma denotes concatenation.
+	The \textit{proof steps} of Sequent Calculus are depicted in \autoref{fig:scsteps1}, \autoref{fig:scsteps2} and \autoref{fig:scsteps3}. There are other formalizations of Sequent Calculus, including some where $\Gamma$ and $\Delta$ are \textit{sets} rather than list,as justified by the \texttt{Contract} and \texttt{Swap} rules, but this formalism is best suited for encoding in Dedukti and is the one we assume in this paper.
+	
+	The rules in \autoref{fig:scsteps1} are called structural rules. The rules in \autoref{fig:scsteps2} are called introduction rules. Each of them correspond to the introduction of s logical symbol on the left or right hand side of the sequent.
+	The rules in \autoref{fig:scsteps3} are called \textit{bonus rules}. These are not typically presented as part of sequent calculus. Since our language is first order logic \textit{with equlity}, the two \texttt{Equality} rules are necessary to encode the properties of equality. the two \texttt{IffSubst} rules describe the substitution of identical formulas for identical formulas. This is an admissible rule in first order logic without schematic symbols, as $\iff$ is a congruence relation for logical operators. In presence of schematic connector symbols, this rule is sound but not admissible. We detail the question more in \autoref{sect:propext}, when we describe the axiom of propositional extensionality.
 	
 \newpage
 	
