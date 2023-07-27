@@ -11,6 +11,9 @@
 
 \input{DIALEKTO}
 
+\newcommand{\Term}{\text{Term}}
+\newcommand{\Formula}{\text{Formula}}
+
 \title{Sequent calculus style in Dedukti}
 \author{Simon Guilloud and Amélie Ledein}
 \date{}
@@ -145,7 +148,9 @@ symbol equiv-prf A : Prf (A Iff A) := iff-ax A A (id-ax A) (id-ax A);
 \newpage	
 	
 	\subsection{First-Order Logic with Equality and Schematic Variables}
-	We consider first-order logic with logical operators $(\neg, \land, \lor, \rightarrow, \leftrightarrow, \forall, \exists, \exists !)$, where $\exists !$ denotes the unique existential. We define the types of \textit{terms} and \textit{formulas}:
+	We consider first-order logic with logical operators $(\neg, \land, \lor, \rightarrow, \leftrightarrow, \forall, \exists, \exists !)$, where $\exists !$ denotes the unique existential. We also consider $=$ as a built-in equality symbol, and accept schematic function and predicate symbols. A schematic symbol is a second-order variable that cannot be bound. It can be substituted, but behaves otherwise like an uninterpreted function or predicate symbol.
+	
+	We define the types of \textit{terms} and \textit{formulas}:
 
 	\begin{lstlisting}[language=Dialekto]
 constant symbol Term : TYPE;
@@ -175,11 +180,27 @@ symbol Iff : Formula → Formula → Formula;
 %symbol Exists : (Term → Formula) → Formula;
 %symbol ExistsOne : (Term → Formula) → Formula;
 %	\end{lstlisting}
-	\subsection{Higher Order Abstract Syntax}
-	Higher Order Abstract Syntax (HOAS) is an approach to make shallow encoding of a system (in our case FOL) in an other (Dedukti) where variables of the original are represented as variable of the target system and not as syntactic objects. As it is not possible to express globally free variables in Dedukti, a formula with a free variable is encoded the following way:
-%	$$
-%	P(x_1) \land Q(x_2) \reducesto \lambda x_1 P(x_1) \land P(x_2)
-%	$$
+	\subsection{Higher-Order Abstract Syntax}
+	Higher-Order Abstract Syntax (HOAS) is an approach to make shallow encoding of a system (in our case FOL) in an other (Dedukti) where variables of the original are represented as variable of the target system and not as syntactic objects. As it is not possible to express globally free variables in Dedukti, a formula with a free variable is encoded the following way:
+	$$
+	P(x_1) \land Q(x_1) \rightsquigarrow \lambda x_1 ,  P(x_1) \land Q(x_1)
+	$$
+	Note that the term on the right has type $\Term \rightarrow \Formula$. We then want
+	$$
+	\forall x_1, P(x_1) \land Q(x_1) \rightsquigarrow \forall (\lambda x_1 ,  P(x_1) \land Q(x_1))
+	$$
+	so that the universal quantifier $\forall$ is an operator with type $(\Term \rightarrow \Formula) \rightarrow \Formula$, and similarly for $\exists$ and $\exists !$. In Dedukti, we hence define:
+		\begin{lstlisting}[language=Dialekto]
+symbol Forall : (Term → Formula) → Formula;
+symbol Exists : (Term → Formula) → Formula;
+symbol ExistsOne : (Term → Formula) → Formula;
+\end{lstlisting}
+%	\end{lstlisting}
+This type of encoding automatically takes care of, for example, capture-avoiding substitutions. Schematic symbols can be represented the same way. Consider for example the induction schema for natural numbers:
+$$
+	'P(0) \land (\forall n, 'P(n) \rightarrow 'P(n+1)) \rightarrow \forall n, 'P(n)
+$$
+It holds for any particular substitution of $'P$ by a formula with a distinguished variable. This is naturally represented in Dedukti by using abstracting over $'P$ with $\lambda 'P: \Term\rightarrow\Formula, ...$.
 	
 	+ $\forall$ binds (higher-order abstract syntax: $\forall x.~A$ expressed as $\forall~\lambda x.~A$)
 	
@@ -203,9 +224,11 @@ symbol Iff : Formula → Formula → Formula;
 	$$
 	We usually use capital greek letter to denote sets of formulas. In an expression such as $\Gamma, \Sigma \vdash \phi, \Delta$, the comma denotes concatenation.
 	The \textit{proof steps} of Sequent Calculus are depicted in \autoref{fig:scsteps1}, \autoref{fig:scsteps2} and \autoref{fig:scsteps3}. There are other formalizations of Sequent Calculus, including some where $\Gamma$ and $\Delta$ are \textit{sets} rather than list,as justified by the \texttt{Contract} and \texttt{Swap} rules, but this formalism is best suited for encoding in Dedukti and is the one we assume in this paper.
-	
-	The rules in \autoref{fig:scsteps1} are called structural rules. The rules in \autoref{fig:scsteps2} are called introduction rules. Each of them correspond to the introduction of a logical symbol on the left or right hand side of the sequent.
-	The rules in \autoref{fig:scsteps3} are called \textit{bonus rules}. These are not typically presented as part of sequent calculus. Since our language is first order logic \textit{with equality}, the two \texttt{Equality} rules are necessary to encode the properties of equality. the two \texttt{IffSubst} rules describe the substitution of identical formulas for identical formulas. This is an admissible rule in first order logic without schematic symbols, as $\iff$ is a congruence relation for logical operators. In presence of schematic connector symbols, this rule is sound but not admissible. We detail the question more in \autoref{sect:propext}, when we describe the axiom of propositional extensionality.
+
+	We call the rules in \autoref{fig:scsteps1} \textit{structural rules}. We call rules in \autoref{fig:scsteps2} introduction rules. Each of them correspond to the introduction of a logical symbol on the left or right hand side of the sequent.
+	We call the rules in \autoref{fig:scsteps3} \textit{bonus rules}. These are not typically presented as part of sequent calculus. 
+	Schematic 	
+	Since our language is first order logic \textit{with equlity}, the two \texttt{Equality} rules are necessary to encode the properties of equality. the two \texttt{IffSubst} rules describe the substitution of identical formulas for identical formulas. This is an admissible rule in first order logic without schematic symbols, as $\iff$ is a congruence relation for logical operators. In presence of schematic connector symbols, this rule is sound but not admissible. We detail the question more in \autoref{sect:propext}, when we describe the axiom of propositional extensionality.
 	
 \newpage
 	
