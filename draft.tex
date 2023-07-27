@@ -161,7 +161,10 @@ symbol Iff : Formula → Formula → Formula;
 %symbol ExistsOne : (Term → Formula) → Formula;
 %	\end{lstlisting}
 	\subsection{Higher Order Abstract Syntax}
-	Higher Order Abstract Syntax (HOAS) is an approach to make shallow encoding of a system (in our case FOL) in an other ($\lambda \Pi$) where variables of the original are represented as variable of the target system and not as syntactic objects.
+	Higher Order Abstract Syntax (HOAS) is an approach to make shallow encoding of a system (in our case FOL) in an other (Dedukti) where variables of the original are represented as variable of the target system and not as syntactic objects. As it is not possible to express globally free variables in Dedukti, a formula with a free variable is encoded the following way:
+%	$$
+%	P(x_1) \land Q(x_2) \reducesto \lambda x_1 P(x_1) \land P(x_2)
+%	$$
 	
 	\iffalse
 	We consider first order logic with arbitrary constant function and predicate symbols. Fomally We fix:
