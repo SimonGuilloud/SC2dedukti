@@ -6,6 +6,7 @@
 \usepackage{amssymb}
 \usepackage{xcolor}
 \usepackage{hyperref}
+\usepackage{bussproofs}
 
 \usepackage{listings}
 
@@ -13,6 +14,7 @@
 
 \newcommand{\Term}{\text{Term}}
 \newcommand{\Formula}{\text{Formula}}
+\newcommand{\schem}[1]{{'\hspace{-0.2em}#1}}
 
 \title{Sequent calculus style in Dedukti}
 \author{Simon Guilloud and Amélie Ledein}
@@ -52,11 +54,11 @@
 
 	\section{Preliminaries}
 
-	This section introduces the logical framework Dedukti (Section~\ref{SSect:Dedukti}), the first-order logic (Section~\ref{SSect:FOL})
+	This section introduces the logical framework Dedukti (\autoref{SSect:Dedukti}), the first-order logic (\autoref{SSect:FOL})
 
-	higher-order abstract syntax (Section~\ref{SSect:HOAS})
+	higher-order abstract syntax (\autoref{SSect:HOAS})
 
-	Sequent Calculus (Section~\ref{SSect:sequent-calculus}).
+	Sequent Calculus (\autoref{SSect:sequent-calculus}).
 
 	\subsection{Dedukti}\label{SSect:Dedukti}
 	
@@ -144,17 +146,17 @@
 	In order to do proofs, .
 	
 	\begin{lstlisting}[language=Dialekto, firstnumber=last]
-symbol Prf : Formula → TYPE;
+symbol fprf : Formula → TYPE;
 	\end{lstlisting}
 	
 	\begin{lstlisting}[language=Dialekto, firstnumber=last]
-symbol id-ax A : Prf (A Implies A);
-symbol iff-ax A B : Prf (A Implies B) → Prf (B Implies A) → Prf (A Iff B);
+symbol id-ax A : fprf (A Implies A);
+symbol iff-ax A B : fprf (A Implies B) → fprf (B Implies A) → fprf (A Iff B);
 	\end{lstlisting}
 	
 	
 	\begin{lstlisting}[language=Dialekto, firstnumber=last]
-symbol equiv-prf A : Prf (A Iff A) := iff-ax A A (id-ax A) (id-ax A);
+symbol equiv-prf A : fprf (A Iff A) := iff-ax A A (id-^ax A) (id-ax A);
 	\end{lstlisting}
 
 \newpage	
@@ -164,24 +166,24 @@ symbol equiv-prf A : Prf (A Iff A) := iff-ax A A (id-ax A) (id-ax A);
 	
 	We define the types of \textit{terms} and \textit{formulas}:
 
-	\begin{lstlisting}[language=Dialekto]
+	\begin{lstlisting}[language=Dialekto, firstnumber=last]
 constant symbol Term : TYPE;
 constant symbol Formula : TYPE;
 	\end{lstlisting}
 	Our encoding imposes no requirements on the structure of terms. In practice,  for every function symbol $f$ of arity $n$ in the source language, the user needs to define a corresponding symbol:
-	\begin{lstlisting}[language=Dialekto]
+	\begin{lstlisting}[language=Dialekto, firstnumber=last]
 constant symbol f :  Term → ... → Term
 	\end{lstlisting}
 	and similarly for predicate symbols
-	\begin{lstlisting}[language=Dialekto]
+	\begin{lstlisting}[language=Dialekto, firstnumber=last]
 constant symbol p :  Term → ... → Formula
 	\end{lstlisting}
 	As we consider first order logic with equality and have special rules for it, we define the equality symbol:
-	\begin{lstlisting}[language=Dialekto]
+	\begin{lstlisting}[language=Dialekto, firstnumber=last]
 constant symbol Equality :  Term → Term → Formula
 	\end{lstlisting}
-	And logical operators:
-	\begin{lstlisting}[language=Dialekto]
+	We also define the boolean operators:
+	\begin{lstlisting}[language=Dialekto, firstnumber=last]
 symbol Neg : Formula → Formula;
 symbol ∧ : Formula → Formula → Formula; notation ∧ infix right 30;
 symbol ∨ : Formula → Formula → Formula; notation ∨ infix right 30;
@@ -201,18 +203,18 @@ symbol Iff : Formula → Formula → Formula;
 	$$
 	\forall x_1, P(x_1) \land Q(x_1) \rightsquigarrow \forall (\lambda x_1 ,  P(x_1) \land Q(x_1))
 	$$
-	so that the universal quantifier $\forall$ is an operator with type $(\Term \rightarrow \Formula) \rightarrow \Formula$, and similarly for $\exists$ and $\exists !$. In Dedukti, we hence define:
-		\begin{lstlisting}[language=Dialekto]
+	so that the universal quantifier $\forall$ is an operator with type \lstinline[language=Dialekto, firstnumber=last]|(Term → Formula) → Formula|, and similarly for $\exists$ and $\exists !$. In Dedukti, we hence define:
+	\begin{lstlisting}[language=Dialekto, firstnumber=last]
 symbol Forall : (Term → Formula) → Formula;
 symbol Exists : (Term → Formula) → Formula;
 symbol ExistsOne : (Term → Formula) → Formula;
 \end{lstlisting}
 %	\end{lstlisting}
-This type of encoding automatically takes care of, for example, capture-avoiding substitutions. Schematic symbols can be represented the same way. Consider for example the induction schema for natural numbers:
+This type of encoding automatically takes care of, for example, capture-avoiding substitutions. Schematic symbols can be represented the same way. Consider for example the following fixed point statement:
 $$
-	'P(0) \land (\forall n, 'P(n) \rightarrow 'P(n+1)) \rightarrow \forall n, 'P(n)
+	(\forall x, 'P(x) \rightarrow 'P(f(x))) \rightarrow (\forall x, 'P(x) \rightarrow 'P(f(f(x))))
 $$
-It holds for any particular substitution of $'P$ by a formula with a distinguished variable. This is naturally represented in Dedukti by using abstracting over $'P$ with $\lambda 'P: \Term\rightarrow\Formula, ...$.
+It holds for any particular substitution of $'P$ by a formula and $'f$ by a term. This is naturally represented in Dedukti by using abstracting over $'P$ and $'f$ with $\lambda 'P, 'f: (\forall x, ('P x) \rightarrow ('P(f x))) \rightarrow (\forall x, ('P x) \rightarrow ('P (f (f x))))$.
 	
 	+ $\forall$ binds (higher-order abstract syntax: $\forall x.~A$ expressed as $\forall~\lambda x.~A$)
 	
@@ -229,23 +231,213 @@ It holds for any particular substitution of $'P$ by a formula with a distinguish
 	and the set of all termsis $\mathcal T = \bigcup_{n=0}^\infty \mathcal{T}_n$.  Moreover, we allow \textit{schematic functions, predicate and connector symbols}.
 	
 	\fi
+
 	\subsection{Sequent calculus}\label{SSect:sequent-calculus}
 	The Sequent Calculus LK is a proof system for first-order logic. A \textit{sequent} is a pair of ordered lists of formulas, noted
 	$$
 	\Gamma \vdash \Delta
 	$$
-	We usually use capital greek letter to denote sets of formulas. In an expression such as $\Gamma, \Sigma \vdash \phi, \Delta$, the comma denotes concatenation.
+	We usually use capital greek letter to denote sets of formulas. In an expression such as $\Gamma, \Sigma \vdash \phi, \Delta$, the comma denotes concatenation. In Dedukti, a sequent is:
+	\begin{lstlisting}[language=Dialekto, firstnumber=last]
+symbol Sequent : TYPE;
+symbol ⊧ : List formula → List formula → Sequent;
+notation ⊧ infix 50;
+	\end{lstlisting}
 	The \textit{proof steps} of Sequent Calculus are depicted in \autoref{fig:scsteps1}, \autoref{fig:scsteps2} and \autoref{fig:scsteps3}. There are other formalizations of Sequent Calculus, including some where $\Gamma$ and $\Delta$ are \textit{sets} rather than list,as justified by the \texttt{Contract} and \texttt{Swap} rules, but this formalism is best suited for encoding in Dedukti and is the one we assume in this paper.
-
 	We call the rules in \autoref{fig:scsteps1} \textit{structural rules}. We call rules in \autoref{fig:scsteps2} introduction rules. Each of them correspond to the introduction of a logical symbol on the left or right hand side of the sequent.
 	We call the rules in \autoref{fig:scsteps3} \textit{bonus rules}. These are not typically presented as part of sequent calculus. 
-	Schematic 	
-	Since our language is first order logic \textit{with equlity}, the two \texttt{Equality} rules are necessary to encode the properties of equality. the two \texttt{IffSubst} rules describe the substitution of identical formulas for identical formulas. This is an admissible rule in first order logic without schematic symbols, as $\iff$ is a congruence relation for logical operators. In presence of schematic connector symbols, this rule is sound but not admissible. We detail the question more in \autoref{sect:propext}, when we describe the axiom of propositional extensionality.
+	The \texttt{Inst} rule for schematic symbols will naturally correspond to beta-reduction, as shown in \autoref{sect:encoding}.
+	Since our language is first order logic \textit{with equlity}, the two \texttt{Equality} rules are necessary to encode the properties of equality. the two \texttt{IffSubst} rules describe the substitution of identical formulas for identical formulas. This is an admissible rule in first order logic without schematic symbols, as $\leftrightarrow$ is a congruence relation for logical operators. In presence of schematic connector symbols, this rule is sound but not admissible. We detail the question more in \autoref{sect:propext}, when we describe the axiom of propositional extensionality.
+	
+\begin{figure}
+    \begin{center}
+        \begin{tabular}{l l}
+        	\AxiomC{$\Gamma, \phi, \psi, \Sigma \vdash \Delta$}
+            \RightLabel{\text { LeftSwap} }
+            \UnaryInfC{$\Gamma, \psi, \phi, \Sigma \vdash \Delta$}
+            \DisplayProof &
+            \AxiomC{$\Gamma \vdash \Delta, \phi, \psi, \Pi$}
+            \RightLabel{\text { RightSwap} }
+            \UnaryInfC{$\Gamma \vdash \Delta, \phi, \psi, \Pi$}
+            \DisplayProof
+            \\[5ex]
+            
+            \AxiomC{$\phi, \phi, \Gamma \vdash \Delta$}
+            \RightLabel{\text { LeftContract} }
+            \UnaryInfC{$\phi, \Gamma \vdash \Delta$}
+            \DisplayProof &
+            \AxiomC{$\Gamma \vdash \phi, \phi, \Delta$}
+            \RightLabel{\text { RightContract} }
+            \UnaryInfC{$\Gamma \vdash \phi, \Delta$}
+            \DisplayProof
+            \\[5ex]
+            
+            \AxiomC{}
+            \RightLabel{\text { Hypothesis}}
+            \UnaryInfC{$\Gamma, \phi \vdash \phi, \Delta$}
+            \DisplayProof &
+            \AxiomC{$\Gamma_1 \vdash \Delta_1$}
+            \RightLabel{\text { Weakening} }
+            \UnaryInfC{$\Gamma_2 \vdash \Delta_2$}
+            \DisplayProof
+            \\[5ex]
+            
+            \multicolumn{2}{c}{
+                \AxiomC{$\Gamma \vdash \phi, \Delta$}
+                \AxiomC{$\Sigma, \phi \vdash \Pi$}
+                \RightLabel{\text{ Cut}}
+                \BinaryInfC{$\Gamma, \Sigma \vdash \Delta, \Pi$}
+                \DisplayProof
+            }
+        \end{tabular}
+    \end{center}
+\caption{Sructural rules of Sequent Calculus}
+\label{fig:scsteps1}
+\end{figure}
+
+
+\begin{figure}
+	
+    \begin{center}
+        \begin{tabular}{l l}
+            \AxiomC{$\Gamma, \phi, \psi \vdash \Delta$}
+            \RightLabel{\text { LeftAnd}}
+            \UnaryInfC{$\Gamma, \phi \land \psi \vdash \Delta$}
+            \DisplayProof &
+            \AxiomC{$\Gamma \vdash \phi, \Delta$}
+            \AxiomC{$\Sigma \vdash \psi, \Pi$}
+            \RightLabel{\text{ RightAnd}}
+            \BinaryInfC{$\Gamma, \Sigma \vdash \phi \land \psi,  \Delta, \Pi$}
+            \DisplayProof
+            \\[5ex]
+
+            \AxiomC{$\Gamma, \phi \vdash \Delta$}
+            \AxiomC{$\Sigma, \psi \vdash \Pi$}
+            \RightLabel{\text{ LeftOr}}
+            \BinaryInfC{$\Gamma, \Sigma, \phi\lor \psi \vdash \Delta, \Pi$}
+            \DisplayProof &
+            \AxiomC{$\Gamma \vdash \phi, \psi, \Delta$}
+            \RightLabel{\text{ RightOr}}
+            \UnaryInfC{$\Gamma \vdash \phi \lor \psi,  \Delta$}
+            \DisplayProof
+            \\[5ex]
+
+            \AxiomC{$\Gamma \vdash \phi, \Delta$}
+            \AxiomC{$\Sigma, \psi \vdash \Pi$}
+            \RightLabel{\text{ LeftImplies}}
+            \BinaryInfC{$\Gamma, \Sigma, \phi\rightarrow \psi \vdash \Delta, \Pi$}
+            \DisplayProof &
+            \AxiomC{$\Gamma, \phi \vdash \psi, \Delta$}
+            \RightLabel{\text{ RightImplies}}
+            \UnaryInfC{$\Gamma \vdash \phi \rightarrow \psi,  \Delta$}
+            \DisplayProof
+            \\[5ex]
+
+            \AxiomC{$\Gamma, \phi \rightarrow \psi \vdash \Delta$}
+            \RightLabel{\text { LeftIff}}
+            \UnaryInfC{$\Gamma, \phi \leftrightarrow \psi \vdash \Delta$}
+            \DisplayProof &
+            \AxiomC{$\Gamma \vdash \phi \rightarrow \psi, \Delta$}
+            \AxiomC{$\Sigma \vdash \psi \rightarrow \phi, \Pi$}
+            \RightLabel{\text{ RightIff}}
+            \BinaryInfC{$\Gamma, \Sigma \vdash \phi \leftrightarrow \psi,  \Delta, \Pi$}
+            \DisplayProof
+            \\[5ex]
+
+            \AxiomC{$\Gamma \vdash \phi, \Delta$}
+            \RightLabel{\text { LeftNot}}
+            \UnaryInfC{$\Gamma, \neg \phi \vdash \Delta$}
+            \DisplayProof &
+            \AxiomC{$\Gamma, \phi \vdash \Delta$}
+            \RightLabel{\text{ RightNot}}
+            \UnaryInfC{$\Gamma \vdash \neg \phi ,  \Delta$}
+            \DisplayProof
+            \\[5ex]
+
+            \AxiomC{$\Gamma, \phi[t := \schem{x}] \vdash \Delta$}
+            \RightLabel{\text { LeftForall}}
+            \UnaryInfC{$\Gamma, \forall \schem{x}. \phi  \vdash \Delta$}
+            \DisplayProof &
+            \AxiomC{$\Gamma \vdash \phi, \Delta$}
+            \RightLabel{\text { RightForall}}
+            \UnaryInfC{$\Gamma \vdash \forall \schem{x}. \phi,  \Delta$}
+            \DisplayProof
+            \\[5ex]
+
+            \AxiomC{$\Gamma, \phi \vdash \Delta$}
+            \RightLabel{\text { LeftExists}}
+            \UnaryInfC{$\Gamma, \exists \schem{x}. \phi \vdash \Delta$}
+            \DisplayProof &
+            \AxiomC{$\Gamma \vdash \phi[t := \schem{x}], \Delta$}
+            \RightLabel{\text { RightExists}}
+            \UnaryInfC{$\Gamma \vdash \exists \schem{x}. \phi,  \Delta$}
+            \DisplayProof
+            \\[5ex]
+		\end{tabular}
+    \end{center}
+\caption{Introduction rules of Sequent Calculus}
+\label{fig:scsteps2}
+\end{figure}
+
+\begin{figure}
+
+    \begin{center}
+        \begin{tabular}{l l}
+            \multicolumn{2}{c}{
+                \AxiomC{$\Gamma \vdash \Delta$}
+                \RightLabel{\text{ InstSchema}}
+                \UnaryInfC{$\Gamma[\psi(\vec{v}) := {\schem{p}(\vec{v})}] \vdash \Delta[\psi(\vec{v}) := {\schem{p}(\vec{v})}]$}
+                \DisplayProof 
+            }\\[5ex]
+
+            \AxiomC{$\Gamma, \phi[s := \schem{f}] \vdash \Delta$}
+            \RightLabel{\text{ LeftSubstEq}}
+            \UnaryInfC{$\Gamma, s=t, \phi[t := \schem{f}] \vdash \Delta$}
+            \DisplayProof &
+            \AxiomC{$\Gamma \vdash \phi[s := \schem{f}], \Delta$}
+            \RightLabel{\text{ RightSubstEq}}
+            \UnaryInfC{$\Gamma, s=t \vdash \phi[t := \schem{f}], \Delta$}
+            \DisplayProof
+            \\[5ex]
+
+            \AxiomC{$\Gamma, \phi[a := {\schem{p}}] \vdash \Delta$}
+            \RightLabel{\text{ LeftSubstIff}}
+            \UnaryInfC{$\Gamma, a \leftrightarrow b, \phi[b := {\schem{p}}] \vdash \Delta$}
+            \DisplayProof &
+            \AxiomC{$\Gamma \vdash \phi[a := {\schem{p}}], \Delta$}
+            \RightLabel{\text{ RightSubstIff}}
+            \UnaryInfC{$\Gamma, a \leftrightarrow b \vdash \phi[b := {\schem{p}}], \Delta$}
+            \DisplayProof
+            \\[5ex]
+
+            \AxiomC{$\Gamma, t = t \vdash \Delta$}
+            \RightLabel{\text { LeftRefl}}
+            \UnaryInfC{$\Gamma \vdash \Delta$}
+            \DisplayProof &
+            \AxiomC{}
+            \RightLabel{\text{ RightRefl}}
+            \UnaryInfC{$\vdash t=t$}
+            \DisplayProof
+            \\[5ex]
+
+        \end{tabular}
+    \end{center}
+\caption{Bonus rules of Sequent Calculus}
+\label{fig:scsteps3}
+\end{figure}
+
 	
 \newpage
-	
-	\section{Encoding of Sequent calculus in Dedukti}\label{Sect:SC-in-dedukti}
-	
+
+	\section{Encoding of Sequent calculus in Dedukti}
+	\label{sect:encoding}
+	We define the (dependent) type of the proofs of a particular sequent:
+	\begin{lstlisting}[language=Dialekto, firstnumber=last]
+symbol prf : Sequent → TYPE;
+	\end{lstlisting}
+	Each deduction rules of 
+
+		
 	We have already defined first-order formula.
 	
 	As we have done for natural numbers, we declare a type of formula at the level of Set in order to define a list of formulas
