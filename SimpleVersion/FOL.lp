@@ -13,8 +13,8 @@ symbol Equality : Term → Term → Formula;
 symbol Top : Formula;
 symbol Bot : Formula;
 
-symbol ∧ : Formula → Formula → Formula;notation ∧ infix right 30;
-symbol ∨ : Formula → Formula → Formula;notation ∨ infix right 30;
+symbol ∧ : Formula → Formula → Formula; notation ∧ infix right 30;
+symbol ∨ : Formula → Formula → Formula; notation ∨ infix right 30;
 symbol Implies : Formula → Formula → Formula;
 
 symbol Forall : (Term → Formula) → Formula;
@@ -29,9 +29,4 @@ symbol Sequent : TYPE;
 symbol ⊧ : List formula → List formula → Sequent;
 notation ⊧ infix 50;
 
-
 symbol prf : Sequent → TYPE;
-
-
-
-

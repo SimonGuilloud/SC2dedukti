@@ -12,7 +12,7 @@ notation ⸬ infix right 20;
 
 symbol append [a] : List a → List a → List a;
 
-rule append Nil $l ↪ $l;
+rule append Nil       $l  ↪ $l;
 rule append ($x ⸬ $l) $l2 ↪ $x ⸬ (append $l $l2);
 rule append $Γ Nil ↪ $Γ;
 
@@ -101,9 +101,8 @@ compute is-perm (1 ⸬ 4 ⸬ 0 ⸬ 2 ⸬ 1 ⸬ Nil);
 compute is-perm (1 ⸬ 4 ⸬ 6 ⸬ 3 ⸬ 0 ⸬ 2 ⸬ Nil);
 compute is-perm (1 ⸬ 4 ⸬ 3 ⸬ 0 ⸬ Nil);
 
-symbol swap2 [a] : List a → Nat → List a;
-rule swap2 Nil _ ↪ Nil;
-rule swap2 ($x ⸬ Nil) _ ↪ $x ⸬ Nil;
-rule swap2 ($x ⸬ $y ⸬ $l) 0 ↪ ($y ⸬ $x ⸬ $l);
-rule swap2 ($x ⸬ $y ⸬ $l) (S $n) ↪ ($x ⸬ (swap2 ($y ⸬ $l) $n));
-
+symbol swap [a] : List a → Nat → List a;
+rule swap Nil            _      ↪ Nil;
+rule swap ($x ⸬ Nil)     _      ↪ $x ⸬ Nil;
+rule swap ($x ⸬ $y ⸬ $l) 0      ↪ ($y ⸬ $x ⸬ $l);
+rule swap ($x ⸬ $y ⸬ $l) (S $n) ↪ ($x ⸬ (swap ($y ⸬ $l) $n));
