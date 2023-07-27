@@ -1,0 +1,205 @@
+\documentclass{article}
+
+\usepackage[utf8x]{inputenc}
+
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{xcolor}
+
+\usepackage{listings}
+
+\input{DIALEKTO}
+
+\title{Sequent calculus style in Dedukti}
+\author{Simon Guilloud and Amélie Ledein}
+\date{}
+
+\begin{document}
+
+	\maketitle
+
+	\begin{abstract}
+		This draft presents a sequent calculus in Dedukti in order to, in the future, translate and recheck LISA proofs.
+	\end{abstract}
+
+	Computer science is spreading increasingly in everyday human life: medecine, transport, communication or also teaching. In some circumstances, software is the critical part of a process as human lives are at stake.
+	For that reason, research at the intersection between mathematics, computer science and logic develops various formal tools
+	% Formal tools exist and are based on different logics.
+	based on different logics to increase the confidence over softwares.
+	Such tools can be SAT or SMT solvers, 
+	%proof assistants as 
+	Lean, Coq, Agda, B, HOL Light, Isabelle, PVS, Metamath, K, etc.
+	To deeply study and understand the logical differences between all these formal tools, some logical frameworks have been elaborated such as Dedukti.
+
+	Dedukti is a logical framework based on the $\lambda\Pi$-calculus modulo theory, a typed $\lambda$-calculus with dependent types and rewriting rules.
+	The flexibility and the expressivity of this logical framework suggest that Dedukti is a good candidate to allow interoperability of proofs. \\
+
+	%\begin{itemize}
+	%	\item justification de Dedukti
+	%	\item contribution
+	%\end{itemize}
+
+	After presenting Dedukti as well as sequent calculus, this article proposes an encoding of sequent calculus 
+
+\newpage
+
+	\section{Preliminaries}
+
+	\subsection{The spirit of Dedukti encodings}
+	
+	
+	using dependent types, Curry-De Bruijn-Howard isomorphism and rewriting rules.
+	
+	\paragraph{First-order logic.} First, we In order to define FOL in Dedukti.
+	
+	The idea is the symbols \textsf{Term} and \textsf{Formula} are types as their type is TYPE. Moreover, these symbols are declared as constant to avoid rewriting.
+
+	
+	
+	First, we define the type of terms
+	This type can be extended 
+	
+	\lstinputlisting[language=Dialekto, firstnumber=last, linerange={8-8}]{SimpleVersion/FOL.lp}
+	
+	\lstinputlisting[language=Dialekto, firstnumber=last, linerange={4-4}]{SimpleVersion/FOL.lp}
+	
+
+	A formula respects the following grammar where $t ::= x~|~...~~$: \\
+	$\phi ::= \textsf{Top}~|~\textsf{Bot}~|~\phi~\land~\phi~|~\phi~\lor~\phi~|~\phi~\textsf{Implies}~\phi~|~\textsf{Forall}~f~|~\textsf{Exists}~f~|~\textsf{Neg}~\phi~|~\phi~\textsf{Iff}~\phi~|~\textsf{ExistsUniq}~f~|~t~\textsf{Equality}~t$
+	
+	\lstinputlisting[language=Dialekto, firstnumber=last, linerange={13-14,16-18,20-21,23-25}]{SimpleVersion/FOL.lp}
+	
+	\lstinputlisting[language=Dialekto, firstnumber=last, linerange={11-11}]{SimpleVersion/FOL.lp}
+	
+	The combinaison of these symbols defines formulas.
+	In order to do proofs, .
+
+	\begin{lstlisting}[language=Dialekto, firstnumber=last]
+symbol Prf : Formula → TYPE;
+	\end{lstlisting}
+
+	\begin{lstlisting}[language=Dialekto, firstnumber=last]
+symbol id-ax A : Prf (A Implies A);
+symbol iff-ax A B : Prf (A Implies B) → Prf (B Implies A) → Prf (A Iff B);
+	\end{lstlisting}
+
+
+	\begin{lstlisting}[language=Dialekto, firstnumber=last]
+symbol equiv-prf A : Prf (A Iff A) := iff-ax A A (id-ax A) (id-ax A);
+	\end{lstlisting}
+
+\newpage
+	
+	%\paragraph{Programming language.}
+	\paragraph{Computation side.}
+	
+	Now we can define natural numbers.
+	
+	% Natural numbers
+	\lstinputlisting[language=Dialekto, firstnumber=last, linerange={20-20, 22-23}]{SimpleVersion/prelude.lp}
+	
+	This declaration is very similar to the definition of an inductive type.
+	
+	Thanks to rewriting rules, it is possible to leave the rewriting engine of Dedukti to do computations.
+	
+	
+	\lstinputlisting[language=Dialekto, firstnumber=last, linerange={1-1}]{SimpleVersion/prelude.lp}
+	
+	Interpretation of set codes in TYPE
+	
+	\lstinputlisting[language=Dialekto, firstnumber=last, linerange={5-5}]{SimpleVersion/prelude.lp}
+	
+	
+	
+	\lstinputlisting[language=Dialekto, firstnumber=last, linerange={29-29,31-31}]{SimpleVersion/prelude.lp}
+	
+	
+	
+	%List
+	\lstinputlisting[language=Dialekto, firstnumber=last, linerange={7-9,11-11}]{SimpleVersion/prelude.lp}
+	
+	% Append
+	\lstinputlisting[language=Dialekto, firstnumber=last, linerange={13-13,15-17}]{SimpleVersion/prelude.lp}
+	
+	% Map and reverse
+	\lstinputlisting[language=Dialekto, firstnumber=last, linerange={33-39}]{SimpleVersion/prelude.lp}
+	
+	List
+	
+	\lstinputlisting[language=Dialekto, firstnumber=last, linerange={104-108}]{SimpleVersion/prelude.lp}
+	
+	
+	\paragraph{To go further.}
+	We have just presented the basic concepts in order to encode a logic into Dedukti.
+	Various logics have been already defined
+	
+	
+	
+	Calculus of Construction~\ref{}, 
+	
+	predicate subtyping~\ref{}, universe polymorphism~\ref{}
+	
+	However logics based on sequent calculus are less explored.
+	
+	
+	\subsection{Sequent calculus}
+	
+\newpage
+	
+	\section{Encoding of Sequent calculus in Dedukti}
+	
+	We have already defined first-order formula.
+	
+	As we have done for natural numbers, we declare a type of formula at the level of Set in order to define a list of formulas
+	
+	\lstinputlisting[language=Dialekto, firstnumber=last, linerange={5-6}]{SimpleVersion/FOL.lp}
+	
+	
+	
+	\lstinputlisting[language=Dialekto, firstnumber=last, linerange={28-29}]{SimpleVersion/FOL.lp}
+	
+	\lstinputlisting[language=Dialekto, firstnumber=last, linerange={31-31}]{SimpleVersion/FOL.lp}
+	
+	
+	
+	\section{Link with other logics}
+	
+	\subsection{Minimalistic}
+	
+	\subsection{Intuitionistic}
+	
+	\subsection{Classic}
+	
+	
+	\section{Alternative}
+	
+	A sequent is a pair of finite lists which can be noted as follows: $H_1,...,H_m \vdash C_1,...,C_n$, where $H_i$ are hypotheses and $C_j$ are conclusions, $m \ge 0$ and $n \ge 0$.
+	
+	The usual interpretation of a sequent is
+	$H_1 \land ... \land H_m \Rightarrow C_1 \lor ... \lor C_j$.
+	
+	As the logical connectives $\land$ and $\lor$ are commutative, it is also suitable to consider that a sequent is a pair of sets.
+	
+	However, as a set respects the properties of associative, commutative, unity and idempotence, it is less convenient to manage it with rewriting rules.
+	To do that, we need to increase the expressivity of considered rewriting systems reasoning modulo ACUI.
+	
+	We implement 
+	
+	In practice, 
+	
+	AC ?
+	
+	\section{LISA}
+	
+	LISA is ...
+	
+	The proposed encoding can be seen as the first step to translate LISA into Dedukti as the encoded sequent calculus is similar to the one used for LISA.
+	For now, LISA does not generate any kind of hints that are necessary to translate and recheck LISA proofs.
+	
+	The next step of this work is to instrument LISA in order to develop a translator from LISA to Dedukti.
+	
+	
+	
+	\section{Conclusion}
+	
+\end{document}
