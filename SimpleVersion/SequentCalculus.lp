@@ -6,9 +6,9 @@ require open lisa2dedukti.SimpleVersion.FOL;
 symbol Hypothesis ϕ Γ Δ : prf ((ϕ ⸬ Γ) ⊧ (ϕ ⸬ Δ));
 
 symbol SwapLeft Γ Δ (perm: (List nat)) : prf (Γ ⊧ Δ) → prf ((permute perm Γ Nil) ⊧ Δ);
-symbol Swap2Left Γ Δ (n : Nat) : prf (Γ ⊧ Δ) → prf ((swap2 Γ n) ⊧ Δ);
+symbol Swap2Left Γ Δ (n : Nat) : prf (Γ ⊧ Δ) → prf ((swap Γ n) ⊧ Δ);
 symbol SwapRight Γ Δ (perm: (List nat)) : prf (Γ ⊧ Δ) → prf (Γ ⊧ (permute perm Δ Nil));
-symbol Swap2Right Γ Δ (n : Nat) : prf (Γ ⊧ Δ) → prf (Γ ⊧ (swap2 Δ n));
+symbol Swap2Right Γ Δ (n : Nat) : prf (Γ ⊧ Δ) → prf (Γ ⊧ (swap Δ n));
 
 
 symbol ContractLeft x Γ Δ : prf ((x ⸬ x ⸬ Γ) ⊧ Δ) → prf ((x ⸬ Γ) ⊧ Δ);
@@ -58,5 +58,3 @@ Dedukti variables, it is a theorem of the (Dedukti) meta-logic
 */
 opaque symbol InstTerm (sx : Term → Sequent) (t:Term) : (Π (x : Term), prf (sx x)) → prf (sx t) ≔ λ f, f t ;
 opaque symbol InstFormula (sx : Formula → Sequent) (ϕ:Formula) : (Π (x : Formula), prf (sx x)) → prf (sx ϕ) ≔ λ f, f ϕ ;
-
-

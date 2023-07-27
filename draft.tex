@@ -25,7 +25,7 @@
 	\maketitle
 
 	\begin{abstract}
-		This draft presents a sequent calculus in Dedukti in order to, in the future, translate and recheck LISA proofs.
+		This draft presents a sequent calculus in Dedukti in order to translate and recheck LISA proofs in the future.
 	\end{abstract}
 
 	Computer science is spreading increasingly in everyday human life: medecine, transport, communication or also teaching. In some circumstances, software is the critical part of a process as human lives are at stake.
@@ -38,7 +38,10 @@
 	To deeply study and understand the logical differences between all these formal tools, some logical frameworks have been elaborated such as Dedukti.
 
 	Dedukti is a logical framework based on the $\lambda\Pi$-calculus modulo theory, a typed $\lambda$-calculus with dependent types and rewriting rules.
-	The flexibility and the expressivity of this logical framework suggest that Dedukti is a good candidate to allow interoperability of proofs. \\
+	Various features and logics have been already defined such as Calculus of Construction~\ref{}, universe polymorphism~\ref{}, predicate subtyping~\ref{}, etc.
+	The flexibility and the expressivity of this logical framework suggest that Dedukti is a good candidate to allow interoperability of proofs.
+	However logics based on sequent calculus are less explored. \\
+
 
 	%\begin{itemize}
 	%	\item justification de Dedukti
@@ -53,38 +56,14 @@
 
 	\subsection{Dedukti}
 	
+	Dedukti is a logical framework inspired from LF one.
+	
+	A theory in Dedukti is a set of symbols and a set of rewriting rules.
 	
 	using dependent types, Curry-De Bruijn-Howard isomorphism and rewriting rules.
 	
 
-	A formula respects the following grammar where $t ::= x~|~...~~$: \\
-	$\phi ::= \textsf{Top}~|~\textsf{Bot}~|~\phi~\land~\phi~|~\phi~\lor~\phi~|~\phi~\textsf{Implies}~\phi~|~\textsf{Forall}~f~|~\textsf{Exists}~f~|~\textsf{Neg}~\phi~|~\phi~\textsf{Iff}~\phi~|~\textsf{ExistsUniq}~f~|~t~\textsf{Equality}~t$
 	
-	\lstinputlisting[language=Dialekto, firstnumber=last, linerange={13-14,16-18,20-21,23-25}]{SimpleVersion/FOL.lp}
-	
-	\lstinputlisting[language=Dialekto, firstnumber=last, linerange={11-11}]{SimpleVersion/FOL.lp}
-	
-	The combinaison of these symbols defines formulas.
-	In order to do proofs, .
-
-	\begin{lstlisting}[language=Dialekto, firstnumber=last]
-symbol Prf : Formula → TYPE;
-	\end{lstlisting}
-
-	\begin{lstlisting}[language=Dialekto, firstnumber=last]
-symbol id-ax A : Prf (A Implies A);
-symbol iff-ax A B : Prf (A Implies B) → Prf (B Implies A) → Prf (A Iff B);
-	\end{lstlisting}
-
-
-	\begin{lstlisting}[language=Dialekto, firstnumber=last]
-symbol equiv-prf A : Prf (A Iff A) := iff-ax A A (id-ax A) (id-ax A);
-	\end{lstlisting}
-
-\newpage
-	
-	%\paragraph{Programming language.}
-	\paragraph{Computation side.}
 	
 	Now we can define natural numbers.
 	
@@ -95,8 +74,11 @@ symbol equiv-prf A : Prf (A Iff A) := iff-ax A A (id-ax A) (id-ax A);
 	
 	Thanks to rewriting rules, it is possible to leave the rewriting engine of Dedukti to do computations.
 	
+	To be able to do polymorphism, we need to declare the type \textsf{Set}.
 	
 	\lstinputlisting[language=Dialekto, firstnumber=last, linerange={1-1}]{SimpleVersion/prelude.lp}
+	
+	and a mapping from \textsf{Set} to TYPE.
 	
 	Interpretation of set codes in TYPE
 	
@@ -104,40 +86,74 @@ symbol equiv-prf A : Prf (A Iff A) := iff-ax A A (id-ax A) (id-ax A);
 	
 	
 	
-	\lstinputlisting[language=Dialekto, firstnumber=last, linerange={29-29,31-31}]{SimpleVersion/prelude.lp}
+	
 	
 	
 	
 	%List
 	\lstinputlisting[language=Dialekto, firstnumber=last, linerange={7-9,11-11}]{SimpleVersion/prelude.lp}
 	
+	In order to be able to declare lists over natural numbers, we need to define a type of natural numbers at the level of \textsf{Set} and map it to the one at the level of TYPE thanks to a rewriting rule.
+	
+	\lstinputlisting[language=Dialekto, firstnumber=last, linerange={29-29,31-31}]{SimpleVersion/prelude.lp}
+	
+	
+	Thanks to rewriting rules, Dedukti allows us to define functions to compute.
+	For instance, the following rewriting rules associated to the symbol \textsf{append} compute the concatenation of two lists.
+	The definition is similar to a pattern-matching declaration over the first argument.
+	
 	% Append
-	\lstinputlisting[language=Dialekto, firstnumber=last, linerange={13-13,15-17}]{SimpleVersion/prelude.lp}
+	\lstinputlisting[language=Dialekto, firstnumber=last, linerange={13-13,15-16}]{SimpleVersion/prelude.lp}
 	
-	% Map and reverse
-	\lstinputlisting[language=Dialekto, firstnumber=last, linerange={33-39}]{SimpleVersion/prelude.lp}
+	\noindent Thanks to the induction principle over lists, it is possible to prove that \textcolor{blue}{$\Pi$} $\Gamma$, \textsf{append} $\Gamma$ \textsf{Nil} = \textsf{Nil}.
 	
-	List
+	\lstinputlisting[language=Dialekto, firstnumber=last, linerange={17-17}]{SimpleVersion/prelude.lp}
+	
+	% Map and reverse -- Pas utilisé
+	%   the symbol \textsf{map}
+	%   the symbol \textsf{reverse}
+	%\lstinputlisting[language=Dialekto, firstnumber=last, linerange={33-39}]{SimpleVersion/prelude.lp}
+	
+	\noindent Following the same idea, we can declare the polymorphic function \textsf{swap} $l$ $n$, which swaps the $n$-th argument of the list $l$ with the ($n+1$)-th one.
 	
 	\lstinputlisting[language=Dialekto, firstnumber=last, linerange={104-108}]{SimpleVersion/prelude.lp}
 	
 	
-	\paragraph{To go further.}
-	We have just presented the basic concepts in order to encode a logic into Dedukti.
-	Various logics have been already defined
+	We have just presented the basic concepts in order to encode a logic into Dedukti. Now we are ready to remain first-order logic and present a encoding of FOL in Dedukti.
+	
+\newpage
+
+	A formula respects the following grammar where $t ::= x~|~...~~$: \\
+	$\phi ::= \textsf{Top}~|~\textsf{Bot}~|~\phi~\land~\phi~|~\phi~\lor~\phi~|~\phi~\textsf{Implies}~\phi~|~\textsf{Forall}~f~|~\textsf{Exists}~f~|~\textsf{Neg}~\phi~|~\phi~\textsf{Iff}~\phi~|~\textsf{ExistsUniq}~f~|~t~\textsf{Equality}~t$
+	
+	\lstinputlisting[language=Dialekto, firstnumber=last, linerange={13-14,16-18,20-21,23-25}]{SimpleVersion/FOL.lp}
+	
+	\lstinputlisting[language=Dialekto, firstnumber=last, linerange={11-11}]{SimpleVersion/FOL.lp}
+	
+	The combinaison of these symbols defines formulas.
+	In order to do proofs, .
+	
+	\begin{lstlisting}[language=Dialekto, firstnumber=last]
+symbol Prf : Formula → TYPE;
+	\end{lstlisting}
+	
+	\begin{lstlisting}[language=Dialekto, firstnumber=last]
+symbol id-ax A : Prf (A Implies A);
+symbol iff-ax A B : Prf (A Implies B) → Prf (B Implies A) → Prf (A Iff B);
+	\end{lstlisting}
 	
 	
+	\begin{lstlisting}[language=Dialekto, firstnumber=last]
+symbol equiv-prf A : Prf (A Iff A) := iff-ax A A (id-ax A) (id-ax A);
+	\end{lstlisting}
+
+\newpage	
 	
-	Calculus of Construction~\ref{}, 
-	
-	predicate subtyping~\ref{}, universe polymorphism~\ref{}
-	
-	However logics based on sequent calculus are less explored.
-	
-	\subsection{First Order Logic with Equality and Schematic Variables}
-	We consider first order logic with logical operators $(\neg, \land, \lor, \rightarrow, \leftrightarrow, \forall, \exists, \exists !)$, where $\exists !$ denotes the unique existential. We also consider $=$ as a built-in equality symbol, and accept schematic function and predicate symbols. A schematic symbol is a second-order variable that cannot be bound. It can be substituted, but behaves otherwise like an uninterpreted function or predicate symbol.
+	\subsection{First-Order Logic with Equality and Schematic Variables}
+	We consider first-order logic with logical operators $(\neg, \land, \lor, \rightarrow, \leftrightarrow, \forall, \exists, \exists !)$, where $\exists !$ denotes the unique existential. We also consider $=$ as a built-in equality symbol, and accept schematic function and predicate symbols. A schematic symbol is a second-order variable that cannot be bound. It can be substituted, but behaves otherwise like an uninterpreted function or predicate symbol.
 	
 	We define the types of \textit{terms} and \textit{formulas}:
+
 	\begin{lstlisting}[language=Dialekto]
 constant symbol Term : TYPE;
 constant symbol Formula : TYPE;
@@ -166,8 +182,8 @@ symbol Iff : Formula → Formula → Formula;
 %symbol Exists : (Term → Formula) → Formula;
 %symbol ExistsOne : (Term → Formula) → Formula;
 %	\end{lstlisting}
-	\subsection{Higher Order Abstract Syntax}
-	Higher Order Abstract Syntax (HOAS) is an approach to make shallow encoding of a system (in our case FOL) in an other (Dedukti) where variables of the original are represented as variable of the target system and not as syntactic objects. As it is not possible to express globally free variables in Dedukti, a formula with a free variable is encoded the following way:
+	\subsection{Higher-Order Abstract Syntax}
+	Higher-Order Abstract Syntax (HOAS) is an approach to make shallow encoding of a system (in our case FOL) in an other (Dedukti) where variables of the original are represented as variable of the target system and not as syntactic objects. As it is not possible to express globally free variables in Dedukti, a formula with a free variable is encoded the following way:
 	$$
 	P(x_1) \land Q(x_1) \rightsquigarrow \lambda x_1 ,  P(x_1) \land Q(x_1)
 	$$
@@ -188,6 +204,8 @@ $$
 $$
 It holds for any particular substitution of $'P$ by a formula and $'f$ by a term. This is naturally represented in Dedukti by using abstracting over $'P$ and $'f$ with $\lambda 'P, 'f: (\forall x, ('P x) \rightarrow ('P(f x))) \rightarrow (\forall x, ('P x) \rightarrow ('P (f (f x))))$.
 	
+	+ $\forall$ binds (higher-order abstract syntax: $\forall x.~A$ expressed as $\forall~\lambda x.~A$)
+	
 	\iffalse
 	We consider first order logic with arbitrary constant function and predicate symbols. Fomally We fix:
 	\begin{itemize}
@@ -203,7 +221,7 @@ It holds for any particular substitution of $'P$ by a formula and $'f$ by a term
 	\fi
 	
 	\subsection{Sequent calculus}
-	The Sequent Calculus LK is a prof system for first order logic. A \textit{sequent} is a pair of ordered lists of formulas, noted
+	The Sequent Calculus LK is a proof system for first-order logic. A \textit{sequent} is a pair of ordered lists of formulas, noted
 	$$
 	\Gamma \vdash \Delta
 	$$
@@ -214,7 +232,6 @@ symbol ⊧ : List formula → List formula → Sequent;
 notation ⊧ infix 50;
 	\end{lstlisting}
 	The \textit{proof steps} of Sequent Calculus are depicted in \autoref{fig:scsteps1}, \autoref{fig:scsteps2} and \autoref{fig:scsteps3}. There are other formalizations of Sequent Calculus, including some where $\Gamma$ and $\Delta$ are \textit{sets} rather than list,as justified by the \texttt{Contract} and \texttt{Swap} rules, but this formalism is best suited for encoding in Dedukti and is the one we assume in this paper.
-	
 	We call the rules in \autoref{fig:scsteps1} \textit{structural rules}. We call rules in \autoref{fig:scsteps2} introduction rules. Each of them correspond to the introduction of a logical symbol on the left or right hand side of the sequent.
 	We call the rules in \autoref{fig:scsteps3} \textit{bonus rules}. These are not typically presented as part of sequent calculus. 
 	The \texttt{Inst} rule for schematic symbols will naturally correspond to beta-reduction, as shown in \autoref{sect:encoding}.

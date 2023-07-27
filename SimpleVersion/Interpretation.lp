@@ -17,7 +17,7 @@ rule ExistsOne $f ↪ Exists (λ y, (Forall (λ x, Iff (Equality x y) ($f x))));
 //Reformulating LK rules in term of Hypothesis, LeftForall, RightForall, LeftImplies, RightImplies
 
 type LeftAnd;
-compute Π Γ: List formula, Π ϕ: Formula, Π ψ: Formula, Π Δ: List formula, prf (seq (ϕ ⸬ (ψ ⸬ Γ)) Δ) → prf (seq ((ϕ ∧ ψ) ⸬ Γ) Δ);
+compute Π Γ: List formula, Π ϕ: Formula, Π ψ: Formula, Π Δ: List formula, prf (seq (ϕ ⸬ (ψ ⸬ Γ)) Δ) → prf (((ϕ ∧ ψ) ⸬ Γ) ⊧ Δ);
 
 
 
@@ -27,7 +27,7 @@ rule (swap-multi (enumerate 2 $Γ) $Γ ($ψ ⸬ ($ϕ ⸬ Nil))) ↪ ($ψ ⸬ ($�
 
 symbol test ϕ ψ Γ Δ ≔ SwapLeft (ϕ ⸬ ψ ⸬ Γ) Δ (1 ⸬ 0 ⸬ (enumerate 2 Γ));
 type test;
-symbol testT ϕ ψ Γ Δ ≔ prf (seq (swap-multi (1 ⸬ (0 ⸬ enumerate 2 Γ)) (ϕ ⸬ (ψ ⸬ Γ)) Nil) Δ);
+symbol testT ϕ ψ Γ Δ ≔ prf ((swap-multi (1 ⸬ (0 ⸬ enumerate 2 Γ)) ⊧ (ϕ ⸬ (ψ ⸬ Γ)) Nil) Δ);
 compute testT;
 
 symbol SwapHeadLeft ϕ ψ Γ Δ : prf( seq (ϕ ⸬ ψ ⸬ Γ) Δ) → prf( seq (ψ ⸬ ϕ ⸬ Γ) Δ) ≔ SwapLeft (ϕ ⸬ ψ ⸬ Γ) Δ (1 ⸬ 0 ⸬ (enumerate 2 Γ));
