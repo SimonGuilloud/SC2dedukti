@@ -2,9 +2,9 @@ constant symbol Set : TYPE;
 
 // Interpretation of set codes in TYPE
 
-injective symbol τ : Set → TYPE; // `t or \tau
+injective symbol τ : Set → TYPE;
 
-constant symbol List:Π a:Set, TYPE;
+constant symbol List: Set → TYPE;
 constant symbol Nil [a] : List a;
 symbol ⸬   [a] : τ a → List a → List a;
 

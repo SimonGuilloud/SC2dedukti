@@ -52,7 +52,13 @@
 
 	\section{Preliminaries}
 
-	\subsection{Dedukti}
+	This section introduces the logical framework Dedukti (Section~\ref{SSect:Dedukti}), the first-order logic (Section~\ref{SSect:FOL})
+
+	higher-order abstract syntax (Section~\ref{SSect:HOAS})
+
+	Sequent Calculus (Section~\ref{SSect:sequent-calculus}).
+
+	\subsection{Dedukti}\label{SSect:Dedukti}
 	
 	Dedukti is a logical framework inspired from LF one.
 	
@@ -70,6 +76,11 @@
 	
 	This declaration is very similar to the definition of an inductive type.
 	
+	
+	To define polymorphic lists
+	As the declaration \lstinline[language=Dialekto, firstnumber=last]|constant symbol List: TYPE → TYPE;| is ill-formed since  a symbol with an  type.
+	
+	
 	Thanks to rewriting rules, it is possible to leave the rewriting engine of Dedukti to do computations.
 	
 	To be able to do polymorphism, we need to declare the type \textsf{Set}.
@@ -83,6 +94,7 @@
 	\lstinputlisting[language=Dialekto, firstnumber=last, linerange={5-5}]{SimpleVersion/prelude.lp}
 	
 	
+
 	
 	
 	
@@ -91,7 +103,7 @@
 	%List
 	\lstinputlisting[language=Dialekto, firstnumber=last, linerange={7-9,11-11}]{SimpleVersion/prelude.lp}
 	
-	In order to be able to declare lists over natural numbers, we need to define a type of natural numbers at the level of \textsf{Set} and map it to the one at the level of TYPE thanks to a rewriting rule.
+	In order to be able to declare lists over natural numbers, we need to define a type of natural numbers at the level of \textsf{Set} and map it to the one at the level of \lstinline[language=Dialekto, firstnumber=last]|TYPE| thanks to a rewriting rule.
 	
 	\lstinputlisting[language=Dialekto, firstnumber=last, linerange={29-29,31-31}]{SimpleVersion/prelude.lp}
 	
@@ -103,7 +115,7 @@
 	% Append
 	\lstinputlisting[language=Dialekto, firstnumber=last, linerange={13-13,15-16}]{SimpleVersion/prelude.lp}
 	
-	\noindent Thanks to the induction principle over lists, it is possible to prove that \textcolor{blue}{$\Pi$} $\Gamma$, \textsf{append} $\Gamma$ \textsf{Nil} = \textsf{Nil}.
+	\noindent Thanks to the induction principle over lists, it is possible to prove that \lstinline[language=Dialekto, firstnumber=last]|Π Γ, append Γ Nil = Γ|.
 	
 	\lstinputlisting[language=Dialekto, firstnumber=last, linerange={17-17}]{SimpleVersion/prelude.lp}
 	
@@ -147,7 +159,7 @@ symbol equiv-prf A : Prf (A Iff A) := iff-ax A A (id-ax A) (id-ax A);
 
 \newpage	
 	
-	\subsection{First-Order Logic with Equality and Schematic Variables}
+	\subsection{First-Order Logic with Equality and Schematic Variables}\label{SSect:FOL}
 	We consider first-order logic with logical operators $(\neg, \land, \lor, \rightarrow, \leftrightarrow, \forall, \exists, \exists !)$, where $\exists !$ denotes the unique existential. We also consider $=$ as a built-in equality symbol, and accept schematic function and predicate symbols. A schematic symbol is a second-order variable that cannot be bound. It can be substituted, but behaves otherwise like an uninterpreted function or predicate symbol.
 	
 	We define the types of \textit{terms} and \textit{formulas}:
@@ -180,7 +192,7 @@ symbol Iff : Formula → Formula → Formula;
 %symbol Exists : (Term → Formula) → Formula;
 %symbol ExistsOne : (Term → Formula) → Formula;
 %	\end{lstlisting}
-	\subsection{Higher-Order Abstract Syntax}
+	\subsection{Higher-Order Abstract Syntax}\label{SSect:HOAS}
 	Higher-Order Abstract Syntax (HOAS) is an approach to make shallow encoding of a system (in our case FOL) in an other (Dedukti) where variables of the original are represented as variable of the target system and not as syntactic objects. As it is not possible to express globally free variables in Dedukti, a formula with a free variable is encoded the following way:
 	$$
 	P(x_1) \land Q(x_1) \rightsquigarrow \lambda x_1 ,  P(x_1) \land Q(x_1)
@@ -217,7 +229,7 @@ It holds for any particular substitution of $'P$ by a formula with a distinguish
 	and the set of all termsis $\mathcal T = \bigcup_{n=0}^\infty \mathcal{T}_n$.  Moreover, we allow \textit{schematic functions, predicate and connector symbols}.
 	
 	\fi
-	\subsection{Sequent calculus}
+	\subsection{Sequent calculus}\label{SSect:sequent-calculus}
 	The Sequent Calculus LK is a proof system for first-order logic. A \textit{sequent} is a pair of ordered lists of formulas, noted
 	$$
 	\Gamma \vdash \Delta
@@ -232,7 +244,7 @@ It holds for any particular substitution of $'P$ by a formula with a distinguish
 	
 \newpage
 	
-	\section{Encoding of Sequent calculus in Dedukti}
+	\section{Encoding of Sequent calculus in Dedukti}\label{Sect:SC-in-dedukti}
 	
 	We have already defined first-order formula.
 	
