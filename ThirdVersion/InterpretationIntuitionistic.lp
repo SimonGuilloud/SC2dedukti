@@ -1,7 +1,7 @@
-require open lisa2dedukti.SimpleVersion.FOL;
-require open lisa2dedukti.SimpleVersion.prelude;
-require open lisa2dedukti.SimpleVersion.SequentCalculus;
-require open lisa2dedukti.SimpleVersion.InterpretationMinimalistic;
+require open lisa2dedukti.ThirdVersion.FOL;
+require open lisa2dedukti.ThirdVersion.prelude;
+require open lisa2dedukti.ThirdVersion.SequentCalculus;
+require open lisa2dedukti.ThirdVersion.InterpretationMinimalistic;
 
 //Here we extend the minimal logic interpretation to intuitionistic logic
 
